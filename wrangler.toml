@@ -1,0 +1,10 @@
+name = "hiphophu-v5"
+compatibility_date = "2026-06-30"
+compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = "dist"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "hiphophu-db"
+database_id = "fbcf3f1f-650a-423c-a0b8-5e419ae49d1f"
+migrations_dir = "server/database/migrations"

@@ -12,6 +12,15 @@ useSeoMeta({
 })
 
 const toast = useToast()
+const route = useRoute()
+const { signIn } = useAuth()
+const loading = ref(false)
+
+// Only allow same-origin relative redirects
+const redirectTo = computed(() => {
+  const r = route.query.redirect
+  return typeof r === 'string' && r.startsWith('/') && !r.startsWith('//') ? r : '/'
+})
 
 const fields = [{
   name: 'email',
@@ -51,8 +60,22 @@ const schema = z.object({
 
 type Schema = z.output<typeof schema>
 
-function onSubmit(payload: FormSubmitEvent<Schema>) {
-  console.log('Submitted', payload)
+async function onSubmit({ data }: FormSubmitEvent<Schema & { remember?: boolean }>) {
+  loading.value = true
+  try {
+    const { error } = await signIn({
+      email: data.email,
+      password: data.password,
+      rememberMe: !!data.remember
+    })
+    if (error) {
+      toast.add({ title: 'Login failed', description: error.message || 'Invalid email or password', color: 'error' })
+      return
+    }
+    await navigateTo(redirectTo.value)
+  } finally {
+    loading.value = false
+  }
 }
 </script>
 
@@ -61,6 +84,7 @@ function onSubmit(payload: FormSubmitEvent<Schema>) {
     :fields="fields"
     :schema="schema"
     :providers="providers"
+    :loading="loading"
     title="Welcome back"
     icon="i-lucide-lock"
     @submit="onSubmit"

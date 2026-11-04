@@ -12,6 +12,8 @@ useSeoMeta({
 })
 
 const toast = useToast()
+const { signUp } = useAuth()
+const loading = ref(false)
 
 const fields = [{
   name: 'name',
@@ -52,8 +54,22 @@ const schema = z.object({
 
 type Schema = z.output<typeof schema>
 
-function onSubmit(payload: FormSubmitEvent<Schema>) {
-  console.log('Submitted', payload)
+async function onSubmit({ data }: FormSubmitEvent<Schema>) {
+  loading.value = true
+  try {
+    const { error } = await signUp({
+      name: data.name,
+      email: data.email,
+      password: data.password
+    })
+    if (error) {
+      toast.add({ title: 'Sign up failed', description: error.message || 'Could not create the account', color: 'error' })
+      return
+    }
+    await navigateTo('/')
+  } finally {
+    loading.value = false
+  }
 }
 </script>
 
@@ -62,6 +78,7 @@ function onSubmit(payload: FormSubmitEvent<Schema>) {
     :fields="fields"
     :schema="schema"
     :providers="providers"
+    :loading="loading"
     title="Create an account"
     :submit="{ label: 'Create account' }"
     @submit="onSubmit"

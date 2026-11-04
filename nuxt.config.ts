@@ -6,7 +6,8 @@ export default defineNuxtConfig({
     '@nuxt/ui',
     '@nuxt/content',
     '@vueuse/nuxt',
-    'nuxt-og-image'
+    'nuxt-og-image',
+    'nitro-cloudflare-dev'
   ],
 
   devtools: {
@@ -30,6 +31,10 @@ export default defineNuxtConfig({
   },
 
   compatibilityDate: '2026-06-30',
+
+  nitro: {
+    preset: 'cloudflare-pages'
+  },
 
   eslint: {
     config: {

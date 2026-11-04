@@ -1,15 +1,47 @@
 <script setup lang="ts">
 import type { ContentNavigationItem } from '@nuxt/content'
+import type { DropdownMenuItem } from '@nuxt/ui'
 
 const route = useRoute()
 
 const navigation = inject<Ref<ContentNavigationItem[]>>('navigation')
+
+const { user, refresh, signOut } = useAuth()
+if (!user.value) await refresh()
 
 const { open: searchOpen } = useContentSearch()
 
 const open = ref(false)
 
 const isDocs = computed(() => route.path === '/docs' || route.path.startsWith('/docs/'))
+
+const accountItems: DropdownMenuItem[] = [
+  {
+    type: 'label',
+    label: user.value?.name ?? '',
+    avatar: {
+      // src: 'https://github.com/benjamincanac.png',
+      alt: user.value?.name ?? ''
+    }
+  },
+  {
+    type: 'separator'
+  },
+  {
+    label: 'Beállítások',
+    icon: 'i-lucide-settings'
+  },
+  {
+    type: 'separator'
+  },
+  {
+    label: 'Sign out',
+    icon: 'i-lucide-log-out',
+    onSelect: async () => {
+      await signOut()
+      await navigateTo('/')
+    }
+  }]
 
 // Both modals portal to `body` with no z-index, so after a client-side layout
 // change the menu can end up painted over the search
@@ -38,7 +70,7 @@ const items = computed(() => [
   {
     label: 'Break Tánc',
     to: '/docs'
-  }
+  },
   // {
   //   label: 'Docs',
   //   to: '/docs'
@@ -51,6 +83,12 @@ const items = computed(() => [
   //   label: 'Blog',
   //   to: '/blog'
   // }
+  ...(user.value
+    ? [{
+        label: 'Users',
+        to: '/admin/users'
+      }]
+    : [])
 ])
 </script>
 
@@ -71,33 +109,48 @@ const items = computed(() => [
     />
 
     <template #right>
+      <template v-if="!user">
+        <UButton
+          icon="i-lucide-log-in"
+          color="neutral"
+          variant="ghost"
+          to="/login"
+          class="lg:hidden"
+        />
+
+        <UButton
+          label="Sign in"
+          color="neutral"
+          variant="outline"
+          to="/login"
+          class="hidden lg:inline-flex"
+        />
+
+        <UButton
+          label="Sign up"
+          color="neutral"
+          trailing-icon="i-lucide-arrow-right"
+          class="hidden lg:inline-flex"
+          to="/signup"
+        />
+      </template>
+
+      <UDropdownMenu
+        v-else
+        :items="accountItems"
+      >
+        <UButton
+          color="neutral"
+          variant="ghost"
+          class="gap-2"
+        >
+          <UAvatar :alt="user.name" />
+        </UButton>
+      </UDropdownMenu>
+
       <UColorModeButton />
 
       <UContentSearchButton class="lg:hidden" />
-
-      <UButton
-        icon="i-lucide-log-in"
-        color="neutral"
-        variant="ghost"
-        to="/login"
-        class="lg:hidden"
-      />
-
-      <UButton
-        label="Sign in"
-        color="neutral"
-        variant="outline"
-        to="/login"
-        class="hidden lg:inline-flex"
-      />
-
-      <UButton
-        label="Sign up"
-        color="neutral"
-        trailing-icon="i-lucide-arrow-right"
-        class="hidden lg:inline-flex"
-        to="/signup"
-      />
     </template>
 
     <template #body>
@@ -116,22 +169,24 @@ const items = computed(() => [
         />
       </template>
 
-      <USeparator class="my-6" />
+      <template v-if="!user">
+        <USeparator class="my-6" />
 
-      <UButton
-        label="Sign in"
-        color="neutral"
-        variant="subtle"
-        to="/login"
-        block
-        class="mb-3"
-      />
-      <UButton
-        label="Sign up"
-        color="neutral"
-        to="/signup"
-        block
-      />
+        <UButton
+          label="Sign in"
+          color="neutral"
+          variant="subtle"
+          to="/login"
+          block
+          class="mb-3"
+        />
+        <UButton
+          label="Sign up"
+          color="neutral"
+          to="/signup"
+          block
+        />
+      </template>
     </template>
   </UHeader>
 </template>
