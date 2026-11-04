@@ -20,6 +20,7 @@ useSeoMeta({
       :title="page.title"
       :description="page.description"
       :links="page.hero.links"
+      orientation="horizontal"
     >
       <template #top>
         <HeroBackground />
@@ -34,6 +35,13 @@ useSeoMeta({
 
       <PromotionalVideo />
     </UPageHero>
+
+    <UPageSection
+      headline="Test"
+      :ui="{ headline: 'font-mono' }"
+    >
+      <ItemList />
+    </UPageSection>
 
     <UPageSection
       v-for="(section, index) in page.sections"

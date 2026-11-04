@@ -19,17 +19,39 @@ watch(searchOpen, (value) => {
   }
 })
 
-const items = computed(() => [{
-  label: 'Docs',
-  to: '/docs',
-  active: isDocs.value
-}, {
-  label: 'Pricing',
-  to: '/pricing'
-}, {
-  label: 'Blog',
-  to: '/blog'
-}])
+const items = computed(() => [
+  {
+    label: 'Zene',
+    to: '/docs',
+    active: isDocs.value
+  },
+  {
+    label: 'DJ',
+    to: '/docs',
+    active: isDocs.value
+  },
+  {
+    label: 'Graffiti',
+    to: '/docs',
+    active: isDocs.value
+  },
+  {
+    label: 'Break Tánc',
+    to: '/docs'
+  }
+  // {
+  //   label: 'Docs',
+  //   to: '/docs'
+  // },
+  // {
+  //   label: 'Pricing',
+  //   to: '/pricing'
+  // }
+  // {
+  //   label: 'Blog',
+  //   to: '/blog'
+  // }
+])
 </script>
 
 <template>
