@@ -2,18 +2,18 @@
 import type { NavigationMenuItem } from '@nuxt/ui'
 
 definePageMeta({
-  alias: '/s'
+  path: '/s'
 })
 
 const links = [[{
   label: 'General',
   icon: 'i-lucide-user',
-  to: '/settings',
+  to: '/s',
   exact: true
 }, {
   label: 'Security',
   icon: 'i-lucide-shield',
-  to: '/settings/security'
+  to: '/s/security'
 }]
 // [{
 //   label: 'Documentation',

@@ -24,7 +24,7 @@ const validate = (state: Partial<PasswordSchema>): FormError[] => {
 </script>
 
 <template>
-  <div>
+  <div class="grid gap-5">
     <UPageCard
       title="Password"
       description="Confirm your current password before setting a new one."
