@@ -4,10 +4,11 @@ import { requireRole } from '../../utils/auth'
 import { useDrizzle } from '../../utils/drizzle'
 
 export default defineEventHandler(async (event) => {
-  await requireRole(event, ['ADMIN', 'USER'])
+  await requireRole(event, ['ADMIN'])
 
   return useDrizzle(event)
     .select({
+      id: user.id,
       name: user.name,
       email: user.email,
       role: user.role,

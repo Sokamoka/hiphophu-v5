@@ -1,9 +1,14 @@
 <script setup lang="ts">
 import type { TableColumn } from '@nuxt/ui'
 
-const UBadge = resolveComponent('UBadge')
+definePageMeta({
+  path: '/a/users',
+  middleware: 'auth',
+  roles: ['ADMIN']
+})
 
-definePageMeta({ middleware: 'auth', roles: ['ADMIN', 'USER'] })
+const UButton = resolveComponent('UButton')
+const UBadge = resolveComponent('UBadge')
 
 const { data: users, status } = await useFetch('/api/admin/users')
 
@@ -17,13 +22,31 @@ const columns: TableColumn<User>[] = [
       ADMIN: 'error' as const,
       EDITOR: 'warning' as const,
       USER: 'success' as const
-    }[row.getValue('status') as string]
+    }[row.getValue('role') as string]
 
-    return h(UBadge, { class: 'capitalize', variant: 'subtle', color }, () =>
+    return h(UBadge, { class: 'capitalize', variant: 'subtle', color, size: 'md' }, () =>
       row.getValue('role')
     )
   } },
-  { accessorKey: 'createdAt', header: 'Registered' }
+  { accessorKey: 'createdAt', header: 'Registered' },
+  {
+    id: 'actions',
+    meta: {
+      class: {
+        td: 'text-right'
+      }
+    },
+    cell: ({ row }) => {
+      console.log(row)
+      return h(UButton, {
+        'icon': 'i-lucide-pencil',
+        'color': 'neutral',
+        'variant': 'ghost',
+        'aria-label': 'Szerkesztés',
+        'to': `/a/users/edit/${row.original.id}`
+      })
+    }
+  }
 ]
 </script>
 

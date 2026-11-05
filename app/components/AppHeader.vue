@@ -27,7 +27,7 @@ const accountItems: DropdownMenuItem[] = [
   {
     label: 'Beállítások',
     icon: 'i-lucide-settings',
-    to: '/settings'
+    to: '/s'
   },
   {
     type: 'separator'
@@ -74,10 +74,10 @@ const items = computed(() => [
     }
   ],
   [
-    ...(user.value
+    ...(user.value?.role === 'ADMIN'
       ? [{
           label: 'Users',
-          to: '/admin/users'
+          to: '/a/users'
         }]
       : [])
 
