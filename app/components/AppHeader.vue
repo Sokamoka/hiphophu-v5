@@ -19,17 +19,15 @@ const accountItems: DropdownMenuItem[] = [
   {
     type: 'label',
     label: user.value?.name ?? '',
-    avatar: {
-      // src: 'https://github.com/benjamincanac.png',
-      alt: user.value?.name ?? ''
-    }
+    description: user.value?.email ?? ''
   },
   {
     type: 'separator'
   },
   {
     label: 'Beállítások',
-    icon: 'i-lucide-settings'
+    icon: 'i-lucide-settings',
+    to: '/settings'
   },
   {
     type: 'separator'
@@ -37,6 +35,7 @@ const accountItems: DropdownMenuItem[] = [
   {
     label: 'Sign out',
     icon: 'i-lucide-log-out',
+    color: 'error',
     onSelect: async () => {
       await signOut()
       await navigateTo('/')
@@ -52,43 +51,37 @@ watch(searchOpen, (value) => {
 })
 
 const items = computed(() => [
-  {
-    label: 'Zene',
-    to: '/docs',
-    active: isDocs.value
-  },
-  {
-    label: 'DJ',
-    to: '/docs',
-    active: isDocs.value
-  },
-  {
-    label: 'Graffiti',
-    to: '/docs',
-    active: isDocs.value
-  },
-  {
-    label: 'Break Tánc',
-    to: '/docs'
-  },
-  // {
-  //   label: 'Docs',
-  //   to: '/docs'
-  // },
-  // {
-  //   label: 'Pricing',
-  //   to: '/pricing'
-  // }
-  // {
-  //   label: 'Blog',
-  //   to: '/blog'
-  // }
-  ...(user.value
-    ? [{
-        label: 'Users',
-        to: '/admin/users'
-      }]
-    : [])
+  [
+
+    {
+      label: 'Zene',
+      to: '/docs',
+      active: isDocs.value
+    },
+    {
+      label: 'DJ',
+      to: '/docs',
+      active: isDocs.value
+    },
+    {
+      label: 'Graffiti',
+      to: '/docs',
+      active: isDocs.value
+    },
+    {
+      label: 'Break Tánc',
+      to: '/docs'
+    }
+  ],
+  [
+    ...(user.value
+      ? [{
+          label: 'Users',
+          to: '/admin/users'
+        }]
+      : [])
+
+  ]
 ])
 </script>
 
@@ -109,6 +102,10 @@ const items = computed(() => [
     />
 
     <template #right>
+      <UColorModeButton />
+
+      <UContentSearchButton class="lg:hidden" />
+
       <template v-if="!user">
         <UButton
           icon="i-lucide-log-in"
@@ -138,6 +135,9 @@ const items = computed(() => [
       <UDropdownMenu
         v-else
         :items="accountItems"
+        :content="{
+          sideOffset: 4
+        }"
       >
         <UButton
           color="neutral"
@@ -147,10 +147,6 @@ const items = computed(() => [
           <UAvatar :alt="user.name" />
         </UButton>
       </UDropdownMenu>
-
-      <UColorModeButton />
-
-      <UContentSearchButton class="lg:hidden" />
     </template>
 
     <template #body>
