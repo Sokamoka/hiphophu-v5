@@ -64,14 +64,15 @@ const items = computed(() => [
       active: isDocs.value
     },
     {
+      label: 'Break Tánc',
+      to: '/a/break'
+    },
+    {
       label: 'Graffiti',
       to: '/docs',
       active: isDocs.value
-    },
-    {
-      label: 'Break Tánc',
-      to: '/docs'
     }
+
   ],
   [
     ...(user.value?.role === 'ADMIN'

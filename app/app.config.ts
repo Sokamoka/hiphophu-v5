@@ -51,6 +51,9 @@ export default defineAppConfig({
       upload: 'i-ph-upload',
       warning: 'i-ph-warning'
     },
+    container: {
+      base: 'px-6 sm:px-8 lg:px-16'
+    },
     input: {
       defaultVariants: {
         variant: 'soft',
