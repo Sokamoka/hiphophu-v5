@@ -77,8 +77,14 @@ const items = computed(() => [
   [
     ...(user.value?.role === 'ADMIN'
       ? [{
-          label: 'Users',
-          to: '/a/users'
+          label: 'Admin',
+          // to: '/u/users',
+          children: [
+            {
+              label: 'Users',
+              to: '/u/users'
+            }
+          ]
         }]
       : [])
 
@@ -105,7 +111,7 @@ const items = computed(() => [
     <template #right>
       <UColorModeButton />
 
-      <UContentSearchButton class="lg:hidden" />
+      <UContentSearchButton />
 
       <template v-if="!user">
         <UButton
@@ -133,21 +139,31 @@ const items = computed(() => [
         />
       </template>
 
-      <UDropdownMenu
-        v-else
-        :items="accountItems"
-        :content="{
-          sideOffset: 4
-        }"
-      >
+      <template v-else>
         <UButton
-          color="neutral"
-          variant="ghost"
-          class="gap-2"
+          label="Saját oldalaim"
+          variant="subtle"
+          icon="i-ph-house"
+          to="/u/artist"
+          block
+          class="lg:inline-fit"
+        />
+
+        <UDropdownMenu
+          :items="accountItems"
+          :content="{
+            sideOffset: 4
+          }"
         >
-          <UAvatar :alt="user.name" />
-        </UButton>
-      </UDropdownMenu>
+          <UButton
+            color="neutral"
+            variant="ghost"
+            class="gap-2"
+          >
+            <UAvatar :alt="user.name" />
+          </UButton>
+        </UDropdownMenu>
+      </template>
     </template>
 
     <template #body>

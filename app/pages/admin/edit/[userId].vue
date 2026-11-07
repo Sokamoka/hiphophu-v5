@@ -3,7 +3,7 @@ import * as z from 'zod'
 import type { FormSubmitEvent } from '@nuxt/ui'
 
 definePageMeta({
-  path: '/a/users/edit/:userId',
+  path: '/u/users/edit/:userId',
   middleware: 'auth',
   roles: ['ADMIN']
 })

@@ -56,7 +56,7 @@ export default defineAppConfig({
     },
     input: {
       defaultVariants: {
-        variant: 'soft',
+        variant: 'subtle',
         size: 'lg'
       },
       slots: {
@@ -65,7 +65,7 @@ export default defineAppConfig({
     },
     select: {
       defaultVariants: {
-        variant: 'soft',
+        variant: 'subtle',
         size: 'lg'
       },
       slots: {
@@ -74,13 +74,13 @@ export default defineAppConfig({
     },
     textarea: {
       defaultVariants: {
-        variant: 'soft',
+        variant: 'subtle',
         size: 'lg'
       }
     },
     selectMenu: {
       defaultVariants: {
-        variant: 'soft',
+        variant: 'subtle',
         size: 'lg'
       },
       slots: {
@@ -89,7 +89,7 @@ export default defineAppConfig({
     },
     inputMenu: {
       defaultVariants: {
-        variant: 'soft',
+        variant: 'subtle',
         size: 'lg'
       },
       slots: {
@@ -98,31 +98,31 @@ export default defineAppConfig({
     },
     inputNumber: {
       defaultVariants: {
-        variant: 'soft',
+        variant: 'subtle',
         size: 'lg'
       }
     },
     inputTags: {
       defaultVariants: {
-        variant: 'soft',
+        variant: 'subtle',
         size: 'lg'
       }
     },
     inputDate: {
       defaultVariants: {
-        variant: 'soft',
+        variant: 'subtle',
         size: 'lg'
       }
     },
     inputTime: {
       defaultVariants: {
-        variant: 'soft',
+        variant: 'subtle',
         size: 'lg'
       }
     },
     pinInput: {
       defaultVariants: {
-        variant: 'soft',
+        variant: 'subtle',
         size: 'lg'
       }
     },

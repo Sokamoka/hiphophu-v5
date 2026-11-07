@@ -2,7 +2,7 @@
 import type { TableColumn } from '@nuxt/ui'
 
 definePageMeta({
-  path: '/a/users',
+  path: '/u/users',
   middleware: 'auth',
   roles: ['ADMIN']
 })
@@ -43,7 +43,7 @@ const columns: TableColumn<User>[] = [
         'color': 'neutral',
         'variant': 'ghost',
         'aria-label': 'Szerkesztés',
-        'to': `/a/users/edit/${row.original.id}`
+        'to': `/u/users/edit/${row.original.id}`
       })
     }
   }
