@@ -7,3 +7,15 @@ export const artistCategories = [
 ] as const
 
 export type ArtistCategory = typeof artistCategories[number]
+
+export interface ArtistFormState {
+  name: string
+  nameId: string
+  isTeam: boolean | null
+  category: ArtistCategory[]
+  description: string
+  links: {
+    platform: string
+    url: string
+  }[]
+}

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import * as z from 'zod'
-import type { FormSubmitEvent, RadioGroupItem, SelectItem } from '@nuxt/ui'
+import type { FormSubmitEvent } from '@nuxt/ui'
 import { artistCategories } from '~~/shared/types/artist'
 
 definePageMeta({
@@ -57,43 +57,43 @@ async function onSubmit({ data }: FormSubmitEvent<UserForm>) {
   // }
 }
 
-function addLink() {
-  artist.links.push({ platform: 'site', url: '' })
-}
+// function addLink() {
+//   artist.links.push({ platform: 'site', url: '' })
+// }
 
-const linkPlaceholder = 'https://example.com/felhasznalo'
+// const linkPlaceholder = 'https://example.com/felhasznalo'
 
-const platforms = [
-  { label: 'Honlap', value: 'site', icon: 'i-ph-globe' },
-  { label: 'YouTube', value: 'youtube', icon: 'i-simple-icons-youtube' },
-  { label: 'Instagram', value: 'instagram', icon: 'i-simple-icons-instagram' },
-  { label: 'Facebook', value: 'facebook', icon: 'i-simple-icons-facebook' },
-  { label: 'TikTok', value: 'tiktok', icon: 'i-simple-icons-tiktok' },
-  { label: 'Spotify', value: 'spotify', icon: 'i-simple-icons-spotify' },
-  { label: 'Apple Music', value: 'apple', icon: 'i-simple-icons-applemusic' },
-  { label: 'YouTube Music', value: 'youtubemusic', icon: 'i-simple-icons-youtubemusic' },
-  { label: 'LinkedIn', value: 'linkedin', icon: 'i-simple-icons-linkedin' }
-]
+// const platforms = [
+//   { label: 'Honlap', value: 'site', icon: 'i-ph-globe' },
+//   { label: 'YouTube', value: 'youtube', icon: 'i-simple-icons-youtube' },
+//   { label: 'Instagram', value: 'instagram', icon: 'i-simple-icons-instagram' },
+//   { label: 'Facebook', value: 'facebook', icon: 'i-simple-icons-facebook' },
+//   { label: 'TikTok', value: 'tiktok', icon: 'i-simple-icons-tiktok' },
+//   { label: 'Spotify', value: 'spotify', icon: 'i-simple-icons-spotify' },
+//   { label: 'Apple Music', value: 'apple', icon: 'i-simple-icons-applemusic' },
+//   { label: 'YouTube Music', value: 'youtubemusic', icon: 'i-simple-icons-youtubemusic' },
+//   { label: 'LinkedIn', value: 'linkedin', icon: 'i-simple-icons-linkedin' }
+// ]
 
-const typeItems = ref<RadioGroupItem[]>([
-  {
-    label: 'Művész',
-    value: false,
-    class: 'w-20'
-  },
-  {
-    label: 'Csapat',
-    value: true,
-    class: 'w-20'
-  }
-])
+// const typeItems = ref<RadioGroupItem[]>([
+//   {
+//     label: 'Művész',
+//     value: false,
+//     class: 'w-20'
+//   },
+//   {
+//     label: 'Csapat',
+//     value: true,
+//     class: 'w-20'
+//   }
+// ])
 
-const categoryItems = ref<SelectItem[]>(
-  artistCategories.map(category => ({
-    label: category,
-    value: category
-  }))
-)
+// const categoryItems = ref<SelectItem[]>(
+//   artistCategories.map(category => ({
+//     label: category,
+//     value: category
+//   }))
+// )
 </script>
 
 <template>
@@ -106,7 +106,22 @@ const categoryItems = ref<SelectItem[]>(
           color="error"
           variant="subtle"
         /> -->
-        <UForm
+        <ArtistProfileForm
+          v-model="artist"
+          :schema="userSchema"
+          @submit="onSubmit"
+        >
+          <UButton
+            form="user"
+            label="Mentés"
+            color="neutral"
+            type="submit"
+            icon="i-lucide-save"
+            class="w-fit lg:ms-auto"
+            :loading="saving"
+          />
+        </ArtistProfileForm>
+        <!-- <UForm
           id="user"
           :schema="userSchema"
           :state="artist"
@@ -228,7 +243,6 @@ const categoryItems = ref<SelectItem[]>(
                 class="w-96"
               />
             </UFormField>
-            <!-- <USeparator /> -->
           </UPageCard>
 
           <UPageCard
@@ -300,7 +314,7 @@ const categoryItems = ref<SelectItem[]>(
               />
             </template>
           </UCard>
-        </UForm>
+        </UForm> -->
       </UContainer>
     </template>
   </UDashboardPanel>
