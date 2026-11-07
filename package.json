@@ -8,7 +8,8 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "lint": "eslint .",
-    "typecheck": "nuxt typecheck"
+    "typecheck": "nuxt typecheck",
+    "db:studio": "drizzle-kit studio --config=drizzle.studio.config.ts"
   },
   "dependencies": {
     "@iconify-json/lucide": "^1.2.150",
@@ -31,6 +32,8 @@
     "@cloudflare/workers-types": "^5.20261103.1",
     "@iconify-json/ph": "^1.2.2",
     "@nuxt/eslint": "^1.17.0",
+    "@types/node": "^26.6.6",
+    "better-sqlite3": "^13.0.3",
     "drizzle-kit": "^0.31.11",
     "eslint": "^10.14.0",
     "eslint-plugin-better-tailwindcss": "^4.10.0",

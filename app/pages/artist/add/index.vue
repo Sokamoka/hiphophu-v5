@@ -24,8 +24,7 @@ const userSchema = z.object({
 type UserForm = z.output<typeof userSchema>
 type UserFormState = z.input<typeof userSchema>
 
-// const route = useRoute()
-// const toast = useToast()
+const toast = useToast()
 const saving = ref(false)
 
 const artist = reactive<UserFormState>({
@@ -38,62 +37,21 @@ const artist = reactive<UserFormState>({
 })
 
 async function onSubmit({ data }: FormSubmitEvent<UserForm>) {
-  // saving.value = true
-  console.log(data)
-  // try {
-  //   await $fetch(`/api/admin/users/${route.params.userId}`, {
-  //     method: 'PATCH',
-  //     body: data
-  //   })
-  //   toast.add({ title: 'User saved' })
-  // } catch (error) {
-  //   toast.add({
-  //     title: 'Save failed',
-  //     description: error instanceof Error ? error.message : 'Could not save user',
-  //     color: 'error'
-  //   })
-  // } finally {
-  //   saving.value = false
-  // }
+  saving.value = true
+  try {
+    await $fetch('/api/artists', { method: 'POST', body: data })
+    toast.add({ title: 'Előadó mentve' })
+    await navigateTo('/')
+  } catch (error) {
+    toast.add({
+      title: 'Sikertelen mentés',
+      description: (error as { statusMessage?: string }).statusMessage ?? 'Az előadó mentése nem sikerült',
+      color: 'error'
+    })
+  } finally {
+    saving.value = false
+  }
 }
-
-// function addLink() {
-//   artist.links.push({ platform: 'site', url: '' })
-// }
-
-// const linkPlaceholder = 'https://example.com/felhasznalo'
-
-// const platforms = [
-//   { label: 'Honlap', value: 'site', icon: 'i-ph-globe' },
-//   { label: 'YouTube', value: 'youtube', icon: 'i-simple-icons-youtube' },
-//   { label: 'Instagram', value: 'instagram', icon: 'i-simple-icons-instagram' },
-//   { label: 'Facebook', value: 'facebook', icon: 'i-simple-icons-facebook' },
-//   { label: 'TikTok', value: 'tiktok', icon: 'i-simple-icons-tiktok' },
-//   { label: 'Spotify', value: 'spotify', icon: 'i-simple-icons-spotify' },
-//   { label: 'Apple Music', value: 'apple', icon: 'i-simple-icons-applemusic' },
-//   { label: 'YouTube Music', value: 'youtubemusic', icon: 'i-simple-icons-youtubemusic' },
-//   { label: 'LinkedIn', value: 'linkedin', icon: 'i-simple-icons-linkedin' }
-// ]
-
-// const typeItems = ref<RadioGroupItem[]>([
-//   {
-//     label: 'Művész',
-//     value: false,
-//     class: 'w-20'
-//   },
-//   {
-//     label: 'Csapat',
-//     value: true,
-//     class: 'w-20'
-//   }
-// ])
-
-// const categoryItems = ref<SelectItem[]>(
-//   artistCategories.map(category => ({
-//     label: category,
-//     value: category
-//   }))
-// )
 </script>
 
 <template>
