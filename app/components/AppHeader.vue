@@ -82,7 +82,13 @@ const items = computed(() => [
           children: [
             {
               label: 'Users',
+              icon: 'i-ph-user-circle',
               to: '/u/users'
+            },
+            {
+              label: 'Artists',
+              icon: 'i-ph-users',
+              to: '/u/artists'
             }
           ]
         }]
@@ -106,6 +112,7 @@ const items = computed(() => [
     <UNavigationMenu
       :items="items"
       variant="link"
+      content-orientation="vertical"
     />
 
     <template #right>

@@ -1,6 +1,8 @@
 <script setup lang="ts">
 definePageMeta({
-  path: '/u/artist'
+  path: '/u/artist',
+  middleware: 'auth',
+  roles: ['ADMIN', 'USER']
 })
 </script>
 
