@@ -6,6 +6,7 @@ export default defineNuxtConfig({
     '@nuxt/ui',
     '@nuxt/content',
     '@vueuse/nuxt',
+    'nuxt-i18n-micro',
     'nuxt-og-image',
     'nitro-cloudflare-dev'
   ],
@@ -43,6 +44,14 @@ export default defineNuxtConfig({
         braceStyle: '1tbs'
       }
     }
+  },
+
+  i18n: {
+    locales: [
+      { code: 'hu', iso: 'hu-HU', displayName: 'Magyar' },
+      { code: 'en', iso: 'en-US', displayName: 'English' }
+    ],
+    defaultLocale: 'hu'
   },
 
   ogImage: {

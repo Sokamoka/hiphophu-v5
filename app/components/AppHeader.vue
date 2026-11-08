@@ -3,6 +3,7 @@ import type { ContentNavigationItem } from '@nuxt/content'
 import type { DropdownMenuItem } from '@nuxt/ui'
 
 const route = useRoute()
+const { ts } = useI18n()
 
 const navigation = inject<Ref<ContentNavigationItem[]>>('navigation')
 
@@ -33,7 +34,7 @@ const accountItems: DropdownMenuItem[] = [
     type: 'separator'
   },
   {
-    label: 'Sign out',
+    label: ts('logout'),
     icon: 'i-lucide-log-out',
     color: 'error',
     onSelect: async () => {
@@ -78,7 +79,6 @@ const items = computed(() => [
     ...(user.value?.role === 'ADMIN'
       ? [{
           label: 'Admin',
-          // to: '/u/users',
           children: [
             {
               label: 'Users',
@@ -130,7 +130,7 @@ const items = computed(() => [
         />
 
         <UButton
-          label="Sign in"
+          :label="$ts('signIn')"
           color="neutral"
           variant="outline"
           to="/login"
@@ -138,7 +138,7 @@ const items = computed(() => [
         />
 
         <UButton
-          label="Sign up"
+          :label="$ts('signUp')"
           color="neutral"
           trailing-icon="i-lucide-arrow-right"
           class="hidden lg:inline-flex"
