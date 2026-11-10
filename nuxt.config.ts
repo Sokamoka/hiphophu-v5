@@ -8,7 +8,8 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
     'nuxt-i18n-micro',
     'nuxt-og-image',
-    'nitro-cloudflare-dev'
+    'nitro-cloudflare-dev',
+    'nuxt-image-cropper'
   ],
 
   devtools: {
@@ -51,7 +52,8 @@ export default defineNuxtConfig({
       { code: 'hu', iso: 'hu-HU', displayName: 'Magyar' },
       { code: 'en', iso: 'en-US', displayName: 'English' }
     ],
-    defaultLocale: 'hu'
+    defaultLocale: 'hu',
+    strategy: 'no_prefix'
   },
 
   ogImage: {

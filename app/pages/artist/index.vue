@@ -13,7 +13,8 @@ const cards = computed<BlogPostProps[]>(() => (artists.value ?? []).map(artist =
   title: artist.name,
   description: artist.description ?? undefined,
   image: artist.pictures?.avatar ?? artist.pictures?.header,
-  date: artist.publishedAt ?? artist.createdAt
+  date: artist.publishedAt ?? artist.createdAt,
+  to: `/u/artist/edit/${artist.id}`
 })))
 </script>
 

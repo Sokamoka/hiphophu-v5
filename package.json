@@ -24,6 +24,7 @@
     "drizzle-orm": "^0.45.4",
     "nuxt": "^4.6.3",
     "nuxt-i18n-micro": "^4.1.0",
+    "nuxt-image-cropper": "^1.1.0",
     "nuxt-og-image": "^7.0.7",
     "tailwindcss": "^4.3.3",
     "ufo": "^1.6.4",
