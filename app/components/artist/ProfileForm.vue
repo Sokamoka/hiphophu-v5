@@ -54,34 +54,33 @@ const categoryItems = ref<SelectItem[]>(
 
 <template>
   <UForm
-    id="user"
+    id="artist-profile-form"
     :schema="props.schema"
     :state="artist as FormState<S>"
     @submit="emit('submit', $event)"
   >
-    <UPageCard
-      title="Artist"
-      description="This information will be displayed publicly."
-      variant="naked"
-      orientation="horizontal"
-      class="mb-4"
-    >
-      <!-- <UButton
-        form="user"
-        label="Mentés"
-        color="neutral"
-        type="submit"
-        icon="i-lucide-save"
-        class="w-fit lg:ms-auto"
-        :loading="saving"
-      /> -->
-      <slot />
-    </UPageCard>
+    <slot />
 
     <UPageCard
       variant="outline"
       class="mb-10"
     >
+      <UFormField
+        name="active"
+        label="Aktív artist"
+        description="Will appear on receipts, invoices, and other communication."
+        required
+        class="flex max-sm:flex-col justify-between items-start gap-4"
+      >
+        <USwitch
+          v-model="artist.isActive"
+          size="xl"
+          class="w-96"
+        />
+      </UFormField>
+
+      <USeparator />
+
       <UFormField
         name="name"
         label="Artist Name"

@@ -21,6 +21,8 @@ const profile = reactive({
         <ImageManager
           v-slot="{ file }"
           orientation="vertical"
+          :output-width="256"
+          :output-height="256"
         >
           <UAvatar
             :src="file || profile.avatar"
@@ -43,6 +45,8 @@ const profile = reactive({
         <ImageManager
           v-slot="{ file }"
           orientation="vertical"
+          :output-width="1280"
+          :output-height="720"
         >
           <div class="aspect-video border border-dashed border-muted">
             <img

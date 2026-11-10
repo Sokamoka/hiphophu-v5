@@ -42,7 +42,7 @@ const desc = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do ei
       <template #top>
         <div class="absolute inset-0 -z-10">
           <img
-            :src="`https://picsum.photos/2000/600?r=${$route.path}`"
+            :src="`https://picsum.photos/1280/720?r=${$route.path}`"
             alt=""
             class="size-full object-cover"
           >

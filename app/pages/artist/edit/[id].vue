@@ -79,14 +79,6 @@ const links = computed(() => {
 
     <template #body>
       <UContainer>
-        <UPageCard
-          :title="artist?.name ?? 'Artist'"
-          description="Artist profile"
-          variant="naked"
-          orientation="horizontal"
-          class="mb-4"
-        />
-
         <UAlert
           v-if="status === 'pending'"
           title="Loading artist"
@@ -101,6 +93,23 @@ const links = computed(() => {
           variant="subtle"
         />
         <template v-else-if="artist">
+          <UPageCard
+            :title="artist.name"
+            description="Szerkesztheted az adatotak"
+            variant="naked"
+            orientation="horizontal"
+            class="mb-4"
+          >
+            <UButton
+              v-if="$route.name === 'ArtistProfile'"
+              form="artist-profile-form"
+              label="Mentés"
+              color="neutral"
+              type="submit"
+              icon="i-lucide-save"
+              class="w-fit lg:ms-auto"
+            />
+          </UPageCard>
           <NuxtPage
             v-model="artist"
             :schema="artistSchema"

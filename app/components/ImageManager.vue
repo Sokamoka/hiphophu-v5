@@ -1,5 +1,5 @@
 <script setup lang="ts">
-defineProps<{
+const props = defineProps<{
   orientation?: 'vertical' | 'horizontal'
   outputWidth?: number
   outputHeight?: number
@@ -10,6 +10,8 @@ const open = ref(false)
 const fileRef = ref<HTMLInputElement>()
 const selectedFileRef = ref<string>()
 const croppedFileRef = ref<string>()
+
+const aspectRatio = computed(() => ((props.outputWidth || 1) / (props.outputHeight || 1)))
 
 function onFileChange(e: Event) {
   const input = e.target as HTMLInputElement
@@ -61,7 +63,6 @@ function onDelete() {
         @change="onFileChange"
       >
       <UButton
-        label="Delete"
         color="error"
         variant="subtle"
         icon="i-ph-x"
@@ -77,15 +78,16 @@ function onDelete() {
 
     <UModal
       v-model:open="open"
-      title="Modal with title"
+      title="Kép méretre vágása"
     >
       <template #body>
         <ImageCropper
           ref="ImageCropper"
           :src="selectedFileRef ?? null"
-          :show-controls="false"
+          :show-controls="true"
           :output-width="outputWidth"
           :output-height="outputHeight"
+          :aspect-ratio="aspectRatio"
           @confirm="onConfirmCrop"
         />
       </template>

@@ -9,6 +9,7 @@ export const artistCategories = [
 export type ArtistCategory = typeof artistCategories[number]
 
 export interface ArtistFormState {
+  isActive: boolean
   name: string
   nameId: string
   isTeam: boolean | null

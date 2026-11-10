@@ -10,6 +10,7 @@ definePageMeta({
 })
 
 const userSchema = z.object({
+  isActive: z.boolean(),
   name: z.string().min(2, 'Too short'),
   nameId: z.string().min(2, 'Required'),
   isTeam: z.boolean().nullable().refine(value => value !== null, 'Required'),
@@ -28,6 +29,7 @@ const toast = useToast()
 const saving = ref(false)
 
 const artist = reactive<UserFormState>({
+  isActive: false,
   name: '',
   nameId: '',
   isTeam: null,
@@ -69,15 +71,23 @@ async function onSubmit({ data }: FormSubmitEvent<UserForm>) {
           :schema="userSchema"
           @submit="onSubmit"
         >
-          <UButton
-            form="user"
-            label="Mentés"
-            color="neutral"
-            type="submit"
-            icon="i-lucide-save"
-            class="w-fit lg:ms-auto"
-            :loading="saving"
-          />
+          <UPageCard
+            title="Artist"
+            description="This information will be displayed publicly."
+            variant="naked"
+            orientation="horizontal"
+            class="mb-4"
+          >
+            <UButton
+              form="user"
+              label="Mentés"
+              color="neutral"
+              type="submit"
+              icon="i-lucide-save"
+              class="w-fit lg:ms-auto"
+              :loading="saving"
+            />
+          </UPageCard>
         </ArtistProfileForm>
         <!-- <UForm
           id="user"
