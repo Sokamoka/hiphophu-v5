@@ -8,6 +8,6 @@ defineOptions({ inheritAttrs: false })
 
 <template>
   <div>
-    Videos
+    <ArtistVideos />
   </div>
 </template>

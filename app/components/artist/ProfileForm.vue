@@ -74,6 +74,7 @@ const categoryItems = ref<SelectItem[]>(
       >
         <USwitch
           v-model="artist.isActive"
+          :label="artist.isActive ? 'aktív' : 'inaktív'"
           size="xl"
           class="w-96"
         />
