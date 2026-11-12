@@ -3,10 +3,12 @@ import * as z from 'zod'
 import { user } from '../../database/schema'
 import { useServerAuth } from '../../utils/auth'
 import { useDrizzle } from '../../utils/drizzle'
+import { userProfileFields } from '../../utils/userProfile'
 
 const profileSchema = z.object({
   name: z.string().min(2),
-  email: z.email()
+  email: z.email(),
+  ...userProfileFields
 })
 
 export default defineEventHandler(async (event) => {
@@ -20,7 +22,7 @@ export default defineEventHandler(async (event) => {
     .update(user)
     .set(result.data)
     .where(eq(user.id, session.user.id))
-    .returning({ id: user.id, name: user.name, email: user.email })
+    .returning({ id: user.id, name: user.name, email: user.email, nickname: user.nickname, location: user.location, language: user.language })
 
   if (!updatedUser) throw createError({ statusCode: 404, statusMessage: 'User not found' })
   return updatedUser

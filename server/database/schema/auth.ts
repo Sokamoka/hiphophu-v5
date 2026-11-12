@@ -4,6 +4,9 @@ import { sqliteTable, text, integer, index, uniqueIndex } from 'drizzle-orm/sqli
 export const ROLES = ['ADMIN', 'EDITOR', 'USER'] as const
 export type Role = typeof ROLES[number]
 
+export const LANGUAGES = ['hu', 'en'] as const
+export type Language = typeof LANGUAGES[number]
+
 const timestamps = {
   createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull().default(sql`(unixepoch() * 1000)`),
   updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).notNull().default(sql`(unixepoch() * 1000)`).$onUpdate(() => new Date())
@@ -15,6 +18,9 @@ export const user = sqliteTable('user', {
   email: text('email').notNull(),
   emailVerified: integer('email_verified', { mode: 'boolean' }).notNull().default(false),
   image: text('image'),
+  nickname: text('nickname'),
+  location: text('location'),
+  language: text('language', { enum: LANGUAGES }).$type<Language>().notNull().default('hu'),
   role: text('role', { enum: ROLES }).$type<Role>().notNull().default('USER'),
   banned: integer('banned', { mode: 'boolean' }).notNull().default(false),
   banReason: text('ban_reason'),

@@ -10,7 +10,7 @@ export default defineEventHandler(async (event) => {
   if (!userId) throw createError({ statusCode: 400, statusMessage: 'Missing user ID' })
 
   const [record] = await useDrizzle(event)
-    .select({ id: user.id, name: user.name, email: user.email, role: user.role })
+    .select({ id: user.id, name: user.name, email: user.email, role: user.role, nickname: user.nickname, location: user.location, language: user.language })
     .from(user)
     .where(eq(user.id, userId))
     .limit(1)

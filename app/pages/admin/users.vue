@@ -16,7 +16,10 @@ type User = NonNullable<typeof users.value>[number]
 
 const columns: TableColumn<User>[] = [
   { accessorKey: 'name', header: 'Name' },
+  { accessorKey: 'nickname', header: 'Nickname' },
   { accessorKey: 'email', header: 'Email' },
+  { accessorKey: 'location', header: 'Location' },
+  { accessorKey: 'language', header: 'Language' },
   { accessorKey: 'role', header: 'Role', cell: ({ row }) => {
     const color = {
       ADMIN: 'error' as const,

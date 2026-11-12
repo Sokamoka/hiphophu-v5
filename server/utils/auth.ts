@@ -3,9 +3,10 @@ import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { admin } from 'better-auth/plugins'
 import { createAccessControl } from 'better-auth/plugins/access'
 import { defaultStatements, adminAc } from 'better-auth/plugins/admin/access'
+import * as z from 'zod'
 import { getRequestURL, createError, type H3Event } from 'h3'
 import { schema, useDrizzle } from './drizzle'
-import type { Role } from '../database/schema'
+import { LANGUAGES, type Role } from '../database/schema'
 
 const statement = { ...defaultStatements, post: ['create', 'update', 'delete', 'publish'] } as const
 export const ac = createAccessControl(statement)
@@ -26,6 +27,13 @@ function createAuth(event: H3Event) {
     baseURL: getRequestURL(event).origin,
     database: drizzleAdapter(useDrizzle(event), { provider: 'sqlite', schema }),
     emailAndPassword: { enabled: true },
+    user: {
+      additionalFields: {
+        nickname: { type: 'string', required: false, input: true },
+        location: { type: 'string', required: false, input: true },
+        language: { type: 'string', required: false, input: true, defaultValue: 'hu', validator: { input: z.enum(LANGUAGES) } }
+      }
+    },
     socialProviders: {
       google: {
         clientId,
