@@ -7,6 +7,7 @@ definePageMeta({
   roles: ['ADMIN']
 })
 
+const UButton = resolveComponent('UButton')
 const UBadge = resolveComponent('UBadge')
 const { data: artists, status } = await useFetch('/api/artists')
 
@@ -28,7 +29,25 @@ const columns: TableColumn<Artist>[] = [
       variant: 'subtle'
     }, () => row.original.isActive ? 'Aktív' : 'Inaktív')
   },
-  { accessorKey: 'createdAt', header: 'Regisztrálva' }
+  { accessorKey: 'createdAt', header: 'Regisztrálva' },
+  {
+    id: 'actions',
+    meta: {
+      class: {
+        td: 'text-right'
+      }
+    },
+    cell: ({ row }) => {
+      console.log(row)
+      return h(UButton, {
+        'icon': 'i-lucide-pencil',
+        'color': 'neutral',
+        'variant': 'ghost',
+        'aria-label': 'Szerkesztés',
+        'to': `/u/artists/${row.original.id}`
+      })
+    }
+  }
 ]
 </script>
 

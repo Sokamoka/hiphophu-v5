@@ -10,29 +10,29 @@ definePageMeta({
 const route = useRoute()
 
 const links = computed(() => {
-  const params = { id: String(route.params.artistId) }
+  const params = { artistId: String(route.params.artistId) }
 
   return [
     {
       label: 'Profile',
       icon: 'i-ph-user',
-      to: { name: 'ArtistProfile', params },
+      to: { name: 'AdminArtistProfile', params },
       exact: true
     },
     {
       label: 'Profile images',
       icon: 'i-ph-user-circle',
-      to: { name: 'ProfileImages', params }
+      to: { name: 'AdminArtistProfileImages', params }
     },
     {
       label: 'Images',
       icon: 'i-ph-images',
-      to: { name: 'ArtistImage', params }
+      to: { name: 'AdminArtistImages', params }
     },
     {
       label: 'Videos',
       icon: 'i-ph-video',
-      to: { name: 'ArtistVideo', params }
+      to: { name: 'AdminArtistVideos', params }
     }
   ] satisfies NavigationMenuItem[]
 })
@@ -86,6 +86,7 @@ const links = computed(() => {
               class="w-fit lg:ms-auto"
             />
           </UPageCard> -->
+        <NuxtPage />
         <!-- <NuxtPage
             v-model="artist"
             :schema="artistSchema"
