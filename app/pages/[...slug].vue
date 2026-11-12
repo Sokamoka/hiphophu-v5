@@ -63,9 +63,9 @@ const active = computed({
       >
         <template #top>
           <div class="absolute inset-0 -z-10">
+            <!-- v-if="artist.pictures?.header || artist.pictures?.avatar" -->
             <img
-              v-if="artist.pictures?.header || artist.pictures?.avatar"
-              :src="artist.pictures.header ?? artist.pictures.avatar"
+              :src="artist.pictures?.header ?? 'https://placehold.co/600x400'"
               :alt="artist.name"
               class="size-full object-cover"
             >
@@ -73,6 +73,11 @@ const active = computed({
             <div class="absolute inset-0 bg-linear-to-b from-transparent from-0% via-transparent via-60% to-default to-100%" />
           </div>
         </template>
+        <UAvatar
+          :alt="artist.name"
+          :ui="{ root: 'size-56', fallback: 'text-7xl', icon: 'size-16' }"
+          class="mx-auto"
+        />
       </UPageHero>
 
       <UTabs

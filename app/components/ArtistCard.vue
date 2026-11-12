@@ -8,7 +8,7 @@ defineProps<{
 
 <template>
   <UBlogPost
-    v-bind="{ ...artist, image: `https://picsum.photos/512/512?r=${$route.path}` }"
+    v-bind="{ ...artist, image: `https://picsum.photos/512/512?r=${artist.to}` }"
     variant="outline"
     :ui="{ body: 'p-3 sm:p-3 px-5', title: 'text-base', header: 'aspect-square' }"
   />
