@@ -13,7 +13,7 @@ useSeoMeta({
 
 const toast = useToast()
 const route = useRoute()
-const { signIn } = useAuth()
+const { signIn, signInSocial } = useAuth()
 const loading = ref(false)
 
 // Only allow same-origin relative redirects
@@ -42,8 +42,19 @@ const fields = [{
 const providers = [{
   label: 'Google',
   icon: 'i-simple-icons-google',
-  onClick: () => {
-    toast.add({ title: 'Google', description: 'Login with Google' })
+  onClick: async () => {
+    loading.value = true
+    try {
+      const { error } = await signInSocial({
+        provider: 'google',
+        callbackURL: redirectTo.value
+      })
+      if (error) {
+        toast.add({ title: 'Login failed', description: error.message || 'Could not sign in with Google', color: 'error' })
+      }
+    } finally {
+      loading.value = false
+    }
   }
 }, {
   label: 'GitHub',

@@ -12,7 +12,7 @@ useSeoMeta({
 })
 
 const toast = useToast()
-const { signUp } = useAuth()
+const { signUp, signInSocial } = useAuth()
 const loading = ref(false)
 
 const fields = [{
@@ -35,8 +35,19 @@ const fields = [{
 const providers = [{
   label: 'Google',
   icon: 'i-simple-icons-google',
-  onClick: () => {
-    toast.add({ title: 'Google', description: 'Login with Google' })
+  onClick: async () => {
+    loading.value = true
+    try {
+      const { error } = await signInSocial({
+        provider: 'google',
+        callbackURL: '/'
+      })
+      if (error) {
+        toast.add({ title: 'Sign up failed', description: error.message || 'Could not sign up with Google', color: 'error' })
+      }
+    } finally {
+      loading.value = false
+    }
   }
 }, {
   label: 'GitHub',

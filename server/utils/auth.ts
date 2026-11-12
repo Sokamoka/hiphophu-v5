@@ -17,11 +17,21 @@ export const roles = {
 
 function createAuth(event: H3Event) {
   const { env } = event.context.cloudflare
+  const { GOOGLE_CLIENT_ID: clientId, GOOGLE_CLIENT_SECRET: clientSecret } = env
+  if (typeof clientId !== 'string' || !clientId || typeof clientSecret !== 'string' || !clientSecret) {
+    throw createError({ statusCode: 500, statusMessage: 'Google authentication is not configured' })
+  }
   return betterAuth({
     secret: env.BETTER_AUTH_SECRET as string | undefined,
     baseURL: getRequestURL(event).origin,
     database: drizzleAdapter(useDrizzle(event), { provider: 'sqlite', schema }),
     emailAndPassword: { enabled: true },
+    socialProviders: {
+      google: {
+        clientId,
+        clientSecret
+      }
+    },
     plugins: [
       admin({ ac, roles, defaultRole: 'USER', adminRoles: ['ADMIN'] })
     ]

@@ -167,7 +167,11 @@ const items = computed(() => [
             variant="ghost"
             class="gap-2"
           >
-            <UAvatar :alt="user.name" />
+            <UAvatar
+              :src="user.image || undefined"
+              :alt="user.name"
+              referrerpolicy="no-referrer"
+            />
           </UButton>
         </UDropdownMenu>
       </template>

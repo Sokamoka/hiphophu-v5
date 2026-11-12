@@ -23,6 +23,7 @@ export function useAuth() {
     session,
     hasRole,
     refresh,
+    signInSocial: authClient.signIn.social,
     signIn: async (...args: Parameters<typeof authClient.signIn.email>) => {
       const res = await authClient.signIn.email(...args)
       await refresh()

@@ -41,6 +41,25 @@ Start the development server on `http://localhost:3000`:
 pnpm dev
 ```
 
+## Google authentication
+
+Set `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` as server-only Cloudflare
+bindings alongside `BETTER_AUTH_SECRET`. For local development, put these values
+in the gitignored `.dev.vars` file; configure the corresponding bindings/secrets
+in Cloudflare for production. Do not expose the client secret in public runtime
+configuration.
+
+In the Google Cloud Console, use a **Web application** OAuth client and add these
+**Authorized redirect URIs**:
+
+- Local development: `http://localhost:3555/api/auth/callback/google`
+- Production: `https://<your-domain>/api/auth/callback/google`
+
+The origin must match the URL used to access the application. If the Google OAuth
+consent screen is in testing mode, add the accounts you want to use as test users.
+The Google button on both login and signup starts the same OAuth flow: new users
+are registered automatically, and existing users are signed in.
+
 ## Production
 
 Build the application for production:
