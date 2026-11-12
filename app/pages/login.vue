@@ -56,12 +56,6 @@ const providers = [{
       loading.value = false
     }
   }
-}, {
-  label: 'GitHub',
-  icon: 'i-simple-icons-github',
-  onClick: () => {
-    toast.add({ title: 'GitHub', description: 'Login with GitHub' })
-  }
 }]
 
 const schema = z.object({
