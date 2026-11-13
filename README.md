@@ -62,6 +62,16 @@ are registered automatically, and existing users are signed in.
 
 ## Production
 
+User profiles use `name` (the `nickname` field has been removed). Signup collects
+name, email, password, and optional location. Language (`hu` by default) and theme
+(`light`, `dark`, or `system`, defaulting to `system`) are edited in Settings
+or by admins in the user editor. The admin user list also displays language.
+The saved theme is applied when signing in and after saving Settings.
+
+Apply the `0004_user_preferences` D1 migration before deploying these profile
+changes. Existing names, locations, and languages are preserved; nicknames are
+deleted and existing users receive the `system` theme.
+
 Artist links are stored in `artists.links` as a JSON array of
 `{ platform, url }` objects. Array order is display order; reordering only requires
 saving the reordered array, not a separate position field.

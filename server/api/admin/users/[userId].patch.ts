@@ -26,7 +26,7 @@ export default defineEventHandler(async (event) => {
     .update(user)
     .set(result.data)
     .where(eq(user.id, userId))
-    .returning({ id: user.id, name: user.name, email: user.email, role: user.role, nickname: user.nickname, location: user.location, language: user.language })
+    .returning({ id: user.id, name: user.name, email: user.email, role: user.role, location: user.location, language: user.language, theme: user.theme })
 
   if (!updatedUser) throw createError({ statusCode: 404, statusMessage: 'User not found' })
   return updatedUser

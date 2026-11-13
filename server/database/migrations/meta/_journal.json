@@ -29,6 +29,13 @@
       "when": 1794567627043,
       "tag": "0003_artist_link_objects",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1794580905112,
+      "tag": "0004_user_preferences",
+      "breakpoints": true
     }
   ]
 }

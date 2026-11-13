@@ -11,9 +11,9 @@ definePageMeta({
 const userSchema = z.object({
   name: z.string().min(2, 'Too short'),
   email: z.email('Invalid email'),
-  nickname: z.string().trim().max(40).refine(v => v.length === 0 || v.length >= 2, 'Too short'),
   location: z.string().trim().max(100),
   language: z.enum(['hu', 'en']),
+  theme: z.enum(['light', 'dark', 'system']),
   role: z.enum(['ADMIN', 'EDITOR', 'USER'])
 })
 
@@ -23,11 +23,12 @@ const route = useRoute()
 const toast = useToast()
 const saving = ref(false)
 const languageOptions = [{ label: 'Magyar', value: 'hu' }, { label: 'English', value: 'en' }]
+const themeOptions = [{ label: 'Light', value: 'light' }, { label: 'Dark', value: 'dark' }, { label: 'System', value: 'system' }]
 const roleOptions = ['ADMIN', 'EDITOR', 'USER'].map(role => ({ label: role, value: role }))
 const { data: user, status, error } = await useFetch<UserForm>(
   () => `/api/admin/users/${route.params.userId}`,
   {
-    transform: data => ({ ...data, nickname: data.nickname ?? '', location: data.location ?? '' })
+    transform: data => ({ ...data, location: data.location ?? '' })
   }
 )
 
@@ -117,18 +118,6 @@ async function onSubmit({ data }: FormSubmitEvent<UserForm>) {
             </UFormField>
             <USeparator />
             <UFormField
-              name="nickname"
-              label="Nickname"
-              class="flex max-sm:flex-col justify-between items-start gap-4"
-            >
-              <UInput
-                v-model="user.nickname"
-                autocomplete="off"
-                class="w-80"
-              />
-            </UFormField>
-            <USeparator />
-            <UFormField
               name="location"
               label="Location"
               class="flex max-sm:flex-col justify-between items-start gap-4"
@@ -149,6 +138,19 @@ async function onSubmit({ data }: FormSubmitEvent<UserForm>) {
               <USelect
                 v-model="user.language"
                 :items="languageOptions"
+                class="w-80"
+              />
+            </UFormField>
+            <USeparator />
+            <UFormField
+              name="theme"
+              label="Theme"
+              required
+              class="flex max-sm:flex-col justify-between items-start gap-4"
+            >
+              <USelect
+                v-model="user.theme"
+                :items="themeOptions"
                 class="w-80"
               />
             </UFormField>

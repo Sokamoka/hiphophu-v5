@@ -21,11 +21,6 @@ const fields = [{
   label: 'Name',
   placeholder: 'Enter your name'
 }, {
-  name: 'nickname',
-  type: 'text' as const,
-  label: 'Nickname',
-  placeholder: 'Enter your nickname'
-}, {
   name: 'email',
   type: 'text' as const,
   label: 'Email',
@@ -40,14 +35,6 @@ const fields = [{
   type: 'text' as const,
   label: 'Location',
   placeholder: 'Enter your city'
-}, {
-  name: 'language',
-  type: 'select' as const,
-  label: 'Language',
-  items: [{ label: 'Magyar', value: 'hu' }, { label: 'English', value: 'en' }],
-  valueKey: 'value',
-  defaultValue: 'hu',
-  required: true
 }]
 
 const providers = [{
@@ -71,11 +58,9 @@ const providers = [{
 
 const schema = z.object({
   name: z.string().min(1, 'Name is required'),
-  nickname: z.string().trim().min(2, 'Nickname must be at least 2 characters').max(40),
   email: z.email('Invalid email'),
   password: z.string().min(8, 'Must be at least 8 characters'),
-  location: z.string().trim().max(100).optional(),
-  language: z.enum(['hu', 'en'])
+  location: z.string().trim().max(100).optional()
 })
 
 type Schema = z.output<typeof schema>
@@ -85,9 +70,7 @@ async function onSubmit({ data }: FormSubmitEvent<Schema>) {
   try {
     const { error } = await signUp({
       name: data.name,
-      nickname: data.nickname,
       location: data.location || undefined,
-      language: data.language,
       email: data.email,
       password: data.password
     })

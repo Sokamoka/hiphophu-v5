@@ -1,6 +1,6 @@
-import type { Role, Language } from '~~/server/database/schema/auth'
+import type { Role, Language, Theme } from '~~/server/database/schema/auth'
 
-export interface AuthUser { id: string, name: string, email: string, image?: string | null, nickname?: string | null, location?: string | null, language: Language, role: Role }
+export interface AuthUser { id: string, name: string, email: string, image?: string | null, location?: string | null, language: Language, theme: Theme, role: Role }
 export interface AuthSession { id: string, expiresAt: string | Date, userId: string }
 interface SessionPayload { user: AuthUser, session: AuthSession }
 

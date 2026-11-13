@@ -6,7 +6,7 @@ import { defaultStatements, adminAc } from 'better-auth/plugins/admin/access'
 import * as z from 'zod'
 import { getRequestURL, createError, type H3Event } from 'h3'
 import { schema, useDrizzle } from './drizzle'
-import { LANGUAGES, type Role } from '../database/schema'
+import { LANGUAGES, THEMES, type Role } from '../database/schema'
 
 const statement = { ...defaultStatements, post: ['create', 'update', 'delete', 'publish'] } as const
 export const ac = createAccessControl(statement)
@@ -29,9 +29,9 @@ function createAuth(event: H3Event) {
     emailAndPassword: { enabled: true },
     user: {
       additionalFields: {
-        nickname: { type: 'string', required: false, input: true },
         location: { type: 'string', required: false, input: true },
-        language: { type: 'string', required: false, input: true, defaultValue: 'hu', validator: { input: z.enum(LANGUAGES) } }
+        language: { type: 'string', required: false, input: true, defaultValue: 'hu', validator: { input: z.enum(LANGUAGES) } },
+        theme: { type: 'string', required: false, input: true, defaultValue: 'system', validator: { input: z.enum(THEMES) } }
       }
     },
     socialProviders: {

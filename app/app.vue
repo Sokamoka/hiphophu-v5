@@ -1,5 +1,10 @@
 <script setup lang="ts">
 const colorMode = useColorMode()
+const { user } = useAuth()
+
+watch(() => user.value?.theme, (theme) => {
+  if (theme) colorMode.preference = theme
+}, { immediate: true })
 
 const color = computed(() => colorMode.value === 'dark' ? '#020618' : 'white')
 
