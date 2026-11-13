@@ -1,5 +1,6 @@
 <script setup lang="ts" generic="S extends z.ZodType<unknown, ArtistFormState>">
 import type * as z from 'zod'
+import { useSortable } from '@vueuse/integrations/useSortable'
 import { kebabCase, splitByCase } from 'scule'
 import type { FormState, FormSubmitEvent, RadioGroupItem, SelectItem } from '@nuxt/ui'
 import { removeDiacritics } from '~/utils/string'
@@ -14,12 +15,9 @@ const emit = defineEmits<{
 }>()
 const artist = defineModel<z.input<S>>({ required: true })
 
-function addLink() {
-  artist.value.links.push({ platform: 'site', url: '' })
-}
-
+const descriptionMaxLength = 512
 const siteUrl = 'https://hiphop.hu/'
-const linkPlaceholder = 'https://example.com/felhasznalo'
+const linkPlaceholder = 'https://example.social/felhasznalo'
 
 const platforms = [
   { label: 'Honlap', value: 'site', icon: 'i-ph-globe' },
@@ -32,6 +30,15 @@ const platforms = [
   { label: 'YouTube Music', value: 'youtubemusic', icon: 'i-simple-icons-youtubemusic' },
   { label: 'LinkedIn', value: 'linkedin', icon: 'i-simple-icons-linkedin' }
 ]
+
+const el = useTemplateRef('el')
+
+useSortable(el, artist.value.links, {
+  handle: '[data-drag-handle]',
+  animation: 320
+} as Parameters<typeof useSortable>[2])
+
+const l = computed(() => (descriptionMaxLength - artist.value.description.length).toString())
 
 const typeItems = ref<RadioGroupItem[]>([
   {
@@ -56,6 +63,14 @@ const categoryItems = ref<SelectItem[]>(
 function createPageName() {
   const name = splitByCase(removeDiacritics(artist.value.name), ['-', '_', '/', '.', ' '])
   artist.value.nameId = kebabCase(name)
+}
+
+function addLink() {
+  artist.value.links.push({ platform: 'site', url: '' })
+}
+
+function removeLink(index: number) {
+  artist.value.links.splice(index, 1)
 }
 </script>
 
@@ -174,6 +189,7 @@ function createPageName() {
         name="description"
         label="Description"
         description="Used to sign in, for email receipts and product updates."
+        :help="l"
         class="flex max-sm:flex-col justify-between items-start gap-4"
       >
         <UTextarea
@@ -181,6 +197,7 @@ function createPageName() {
           color="neutral"
           variant="subtle"
           placeholder="Description"
+          :maxlength="descriptionMaxLength"
           class="w-96"
         />
       </UFormField>
@@ -195,7 +212,10 @@ function createPageName() {
       class="mb-4"
     />
     <UCard variant="outline">
-      <div class="space-y-5">
+      <div
+        ref="el"
+        class="space-y-5"
+      >
         <UEmpty
           v-if="artist.links.length === 0"
           title="Nincs külső hivatkozás beállítva"
@@ -216,6 +236,15 @@ function createPageName() {
           :key="index"
         >
           <div class="flex gap-3 items-start">
+            <UButton
+              icon="i-lucide-grip-vertical"
+              color="neutral"
+              variant="ghost"
+              class="cursor-grab active:cursor-grabbing me-3"
+              data-drag-handle
+              aria-label="Átrendezés"
+            />
+
             <USelect
               v-model="socialLink.platform"
               :items="platforms"
@@ -237,7 +266,7 @@ function createPageName() {
               icon="i-ph-x"
               color="error"
               variant="ghost"
-              @click="artist.links.splice(index, 1)"
+              @click="removeLink(index)"
             />
           </div>
         </template>

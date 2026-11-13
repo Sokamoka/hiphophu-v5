@@ -33,7 +33,9 @@ const artistSchema = z.object({
 type ArtistDetails = z.input<typeof artistSchema>
 
 const route = useRoute()
-const { data: artist, status, error } = await useFetch<ArtistDetails>(() => `/api/artists/${route.params.id}`)
+const { data: artist, status, error } = await useFetch<ArtistDetails>(() => `/api/artists/${route.params.id}`, {
+  deep: true
+})
 
 const links = computed(() => {
   const params = { id: String(route.params.id) }
