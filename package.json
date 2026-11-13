@@ -23,7 +23,7 @@
     "@vueuse/nuxt": "^14.4.0",
     "better-auth": "^1.7.15",
     "drizzle-orm": "^0.45.4",
-    "nuxt": "^4.6.3",
+    "nuxt": "^4.6.4",
     "nuxt-i18n-micro": "^4.1.0",
     "nuxt-image-cropper": "^1.1.0",
     "nuxt-og-image": "^7.0.7",
