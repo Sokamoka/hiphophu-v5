@@ -1,6 +1,8 @@
 <script setup lang="ts" generic="S extends z.ZodType<unknown, ArtistFormState>">
 import type * as z from 'zod'
+import { kebabCase, splitByCase } from 'scule'
 import type { FormState, FormSubmitEvent, RadioGroupItem, SelectItem } from '@nuxt/ui'
+import { removeDiacritics } from '~/utils/string'
 import type { ArtistFormState } from '~~/shared/types/artist'
 
 const props = defineProps<{
@@ -50,6 +52,11 @@ const categoryItems = ref<SelectItem[]>(
     value: category
   }))
 )
+
+function createPageName() {
+  const name = splitByCase(removeDiacritics(artist.value.name), ['-', '_', '/', '.', ' '])
+  artist.value.nameId = kebabCase(name)
+}
 </script>
 
 <template>
@@ -93,6 +100,7 @@ const categoryItems = ref<SelectItem[]>(
           v-model="artist.name"
           autocomplete="off"
           class="w-96"
+          @change="createPageName"
         />
       </UFormField>
 
