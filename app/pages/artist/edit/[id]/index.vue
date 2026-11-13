@@ -1,23 +1,25 @@
-<script setup lang="ts">
+<script setup lang="ts" generic="S extends z.ZodType<unknown, ArtistFormState>">
+import type { FormSubmitEvent } from '@nuxt/ui'
 import type * as z from 'zod'
 import type { ArtistFormState } from '~~/shared/types/artist'
 
-definePageMeta({
-  name: 'ArtistProfile'
-})
-
-defineProps<{
-  schema: z.ZodType<unknown, ArtistFormState>
+const props = defineProps<{
+  schema: S
 }>()
 
-const artist = defineModel<ArtistFormState>({ required: true })
+const emit = defineEmits<{
+  submit: [event: FormSubmitEvent<z.output<S>>]
+}>()
+
+const artist = defineModel<z.input<S>>({ required: true })
 </script>
 
 <template>
   <div>
     <ArtistProfileForm
       v-model="artist"
-      :schema="schema"
+      :schema="props.schema"
+      @submit="emit('submit', $event)"
     />
   </div>
 </template>
