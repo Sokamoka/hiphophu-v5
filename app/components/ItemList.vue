@@ -21,17 +21,26 @@ const posts = ref<BlogPostProps[]>([
     title: 'Nuxt 3.13',
     image: 'https://nuxt.com/assets/blog/v3.13.png',
     to: '/artist4'
+  },
+  {
+    title: 'Nuxt 3.13',
+    image: 'https://nuxt.com/assets/blog/v3.13.png',
+    to: '/artist4'
+  },
+  {
+    title: 'Nuxt 3.13',
+    image: 'https://nuxt.com/assets/blog/v3.13.png',
+    to: '/artist4'
   }
 ])
 </script>
 
 <template>
-  <UBlogPosts>
-    <UBlogPost
+  <ScrollContainer title="zene">
+    <ArtistCard
       v-for="(post, index) in posts"
       :key="index"
-      v-bind="post"
-      variant="soft"
+      :artist="post"
     />
-  </UBlogPosts>
+  </ScrollContainer>
 </template>

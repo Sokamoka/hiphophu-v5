@@ -36,10 +36,7 @@ useSeoMeta({
       <PromotionalVideo />
     </UPageHero>
 
-    <UPageSection
-      headline="Test"
-      :ui="{ headline: 'font-mono' }"
-    >
+    <UPageSection :ui="{ title: 'sm:text-xl lg:text-xl text-pretty tracking-tight text-left text-base', container: 'py-5 sm:py-5 lg:py-5 gap-1 sm:gap-1' }">
       <ItemList />
     </UPageSection>
 

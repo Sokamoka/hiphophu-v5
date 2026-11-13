@@ -35,19 +35,19 @@ const columns = [{
   }]
 }]
 
-const toast = useToast()
+// const toast = useToast()
 
-const email = ref('')
-const loading = ref(false)
+// const email = ref('')
+// const loading = ref(false)
 
-function onSubmit() {
-  loading.value = true
+// function onSubmit() {
+//   loading.value = true
 
-  toast.add({
-    title: 'Subscribed!',
-    description: 'You\'ve been subscribed to our newsletter.'
-  })
-}
+//   toast.add({
+//     title: 'Subscribed!',
+//     description: 'You\'ve been subscribed to our newsletter.'
+//   })
+// }
 </script>
 
 <template>
@@ -58,7 +58,7 @@ function onSubmit() {
       <UContainer>
         <UFooterColumns :columns="columns">
           <template #right>
-            <form @submit.prevent="onSubmit">
+            <!-- <form @submit.prevent="onSubmit">
               <UFormField
                 name="email"
                 label="Subscribe to our newsletter"
@@ -80,7 +80,7 @@ function onSubmit() {
                   </template>
                 </UInput>
               </UFormField>
-            </form>
+            </form> -->
           </template>
         </UFooterColumns>
       </UContainer>
