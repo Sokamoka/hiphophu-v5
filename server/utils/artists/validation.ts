@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { artistLinkSchema } from '../../../shared/types/artist'
 
 const dateField = z
   .union([
@@ -23,7 +24,7 @@ export const artistInputSchema = z.object({
   videos: list,
   images: list,
   editor: list,
-  links: list,
+  links: z.array(artistLinkSchema).default([]),
   tags: list,
   pictures: z
     .object({ header: z.string().optional(), avatar: z.string().optional() })

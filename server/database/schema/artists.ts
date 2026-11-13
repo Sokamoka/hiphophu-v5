@@ -1,5 +1,6 @@
 import { relations } from 'drizzle-orm'
 import { sqliteTable, text, integer, primaryKey } from 'drizzle-orm/sqlite-core'
+import type { ArtistLink } from '../../../shared/types/artist'
 
 const stringArray = (name: string) => text(name, { mode: 'json' }).$type<string[]>().notNull().$defaultFn(() => [])
 
@@ -15,7 +16,7 @@ export const artists = sqliteTable('artists', {
   videos: stringArray('videos'),
   images: stringArray('images'),
   editor: stringArray('editor'),
-  links: stringArray('links'),
+  links: text('links', { mode: 'json' }).$type<ArtistLink[]>().notNull().$defaultFn(() => []),
   pictures: text('pictures', { mode: 'json' }).$type<{ header?: string, avatar?: string }>(),
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
   updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull(),

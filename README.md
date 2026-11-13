@@ -62,6 +62,15 @@ are registered automatically, and existing users are signed in.
 
 ## Production
 
+Artist links are stored in `artists.links` as a JSON array of
+`{ platform, url }` objects. Array order is display order; reordering only requires
+saving the reordered array, not a separate position field.
+
+Apply the `0003_artist_link_objects` D1 migration before deploying the new link
+format. It preserves existing URLs and their order, assigning `site` to legacy
+string links because their original platforms were not stored. Already structured
+links are left unchanged.
+
 Build the application for production:
 
 ```bash

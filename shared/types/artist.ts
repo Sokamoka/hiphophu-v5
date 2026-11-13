@@ -1,3 +1,12 @@
+import { z } from 'zod'
+
+export const artistLinkSchema = z.object({
+  platform: z.string(),
+  url: z.url()
+})
+
+export type ArtistLink = z.output<typeof artistLinkSchema>
+
 export const artistCategories = [
   'RAP',
   'DANCE',
@@ -15,8 +24,5 @@ export interface ArtistFormState {
   isTeam: boolean | null
   category: ArtistCategory[]
   description: string
-  links: {
-    platform: string
-    url: string
-  }[]
+  links: ArtistLink[]
 }
