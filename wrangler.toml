@@ -8,3 +8,7 @@ binding = "DB"
 database_name = "hiphophu-db"
 database_id = "fbcf3f1f-650a-423c-a0b8-5e419ae49d1f"
 migrations_dir = "server/database/migrations"
+
+[[r2_buckets]]
+binding = "BLOB"
+bucket_name = "hiphophu"
