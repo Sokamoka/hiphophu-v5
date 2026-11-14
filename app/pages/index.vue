@@ -36,8 +36,19 @@ useSeoMeta({
       <PromotionalVideo />
     </UPageHero>
 
-    <UPageSection :ui="{ title: 'sm:text-xl lg:text-xl text-pretty tracking-tight text-left text-base', container: 'py-5 sm:py-5 lg:py-5 gap-1 sm:gap-1' }">
-      <ItemList />
+    <UPageSection :ui="{ title: 'sm:text-xl lg:text-xl text-pretty tracking-tight text-left text-base', container: 'py-5 sm:py-5 lg:py-5 gap-1 sm:gap-1 space-y-10' }">
+      <ItemList
+        title="Zene"
+        filter="RAP,DJ,BEATBOX"
+      />
+      <ItemList
+        title="Tánc"
+        filter="DANCE"
+      />
+      <ItemList
+        title="Graffiti"
+        filter="GRAFFITI"
+      />
     </UPageSection>
 
     <UPageSection

@@ -33,7 +33,7 @@ function scroll(direction: number) {
     :title
     variant="naked"
     orientation="horizontal"
-    :ui="{ title: 'text-xl' }"
+    :ui="{ title: 'font-mono text-sm uppercase' }"
   >
     <div
       v-if="canScroll"

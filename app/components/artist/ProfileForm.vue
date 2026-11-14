@@ -198,6 +198,7 @@ function removeLink(index: number) {
           variant="subtle"
           placeholder="Description"
           :maxlength="descriptionMaxLength"
+          autoresize
           class="w-96"
         />
       </UFormField>

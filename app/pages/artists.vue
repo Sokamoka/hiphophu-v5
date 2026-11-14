@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import type { BlogPostProps } from '@nuxt/ui'
 
+definePageMeta({
+  path: '/c'
+})
+
 const route = useRoute()
 const categories = computed(() => {
   const categoryQuery = route.query.category
@@ -15,15 +19,12 @@ const { data: artists, status, error } = await useFetch('/api/artists/public', {
 const posts = computed<(BlogPostProps & { id: string })[]>(() => (artists.value ?? []).map(artist => ({
   id: artist.id,
   title: artist.name,
-  description: artist.description ?? undefined,
-  image: artist.pictures?.avatar ?? artist.pictures?.header,
+  // description: artist.description ?? undefined,
+  image: artist.pictures?.avatar ?? artist.pictures?.header ?? 'https://www.ersteliga.hu/_upload/editor/650x650_A2.png',
   date: artist.publishedAt ?? artist.createdAt,
+  isTeam: artist.isTeam,
   to: `/${artist.nameId}`
 })))
-
-definePageMeta({
-  path: '/c'
-})
 </script>
 
 <template>

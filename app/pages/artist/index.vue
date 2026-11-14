@@ -9,11 +9,13 @@ definePageMeta({
 
 const { data: artists, status } = await useFetch('/api/artists/mine')
 
-const cards = computed<BlogPostProps[]>(() => (artists.value ?? []).map(artist => ({
+const cards = computed<(BlogPostProps & { id: string, isTeam: boolean })[]>(() => (artists.value ?? []).map(artist => ({
+  id: artist.id,
   title: artist.name,
-  description: artist.description ?? undefined,
-  image: artist.pictures?.avatar ?? artist.pictures?.header,
+  // description: artist.description ?? undefined,
+  image: artist.pictures?.avatar ?? artist.pictures?.header ?? 'https://www.ersteliga.hu/_upload/editor/650x650_A2.png',
   date: artist.publishedAt ?? artist.createdAt,
+  isTeam: artist.isTeam,
   to: `/u/artist/edit/${artist.id}`
 })))
 </script>

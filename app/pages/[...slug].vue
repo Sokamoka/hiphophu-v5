@@ -12,6 +12,17 @@ const { data: artist, status, error } = await useFetch(
   () => `/api/artists/by-name-id/${encodeURIComponent(nameId.value ?? '')}`
 )
 
+const title = computed(() => artist.value?.name || 'Artist')
+const description = computed(() => artist.value?.description || `Ismerd meg ${title.value} adatlapját, videóit és képeit a HipHopHu-n.`)
+
+useSeoMeta({
+  title,
+  ogTitle: title,
+  description,
+  ogDescription: description,
+  ogImage: computed(() => artist.value?.pictures?.header || artist.value?.pictures?.avatar)
+})
+
 const items: TabsItem[] = [
   {
     label: 'Videók',

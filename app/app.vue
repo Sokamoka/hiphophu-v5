@@ -23,7 +23,7 @@ useHead({
 })
 
 useSeoMeta({
-  titleTemplate: '%s - Nuxt SaaS template',
+  titleTemplate: '%s - hiphop.hu',
   twitterCard: 'summary_large_image'
 })
 
