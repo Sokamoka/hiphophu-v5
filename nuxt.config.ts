@@ -9,7 +9,8 @@ export default defineNuxtConfig({
     'nuxt-i18n-micro',
     'nuxt-og-image',
     'nitro-cloudflare-dev',
-    'nuxt-image-cropper'
+    'nuxt-image-cropper',
+    '@nuxthub/core'
   ],
 
   devtools: {
@@ -39,6 +40,14 @@ export default defineNuxtConfig({
     preset: 'cloudflare-pages'
   },
 
+  hub: {
+    blob: {
+      driver: 'cloudflare-r2',
+      binding: 'BLOB',
+      bucketName: 'hiphophu'
+    }
+  },
+
   eslint: {
     config: {
       stylistic: {
@@ -55,6 +64,10 @@ export default defineNuxtConfig({
     ],
     defaultLocale: 'hu',
     strategy: 'no_prefix'
+  },
+
+  image: {
+    none: {}
   },
 
   ogImage: {

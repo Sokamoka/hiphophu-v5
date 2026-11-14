@@ -3,16 +3,45 @@ import { useSortable } from '@vueuse/integrations/useSortable'
 
 const pictures = ref<{ title: string, image: string }[]>([])
 const el = useTemplateRef('el')
+const files = shallowRef<File[]>([])
+const toast = useToast()
+const uploading = ref(false)
+
+const upload = useUpload('/api/artists/upload-artist-pictures', {
+  multiple: true
+})
 
 useSortable(el, pictures, {
   handle: '[data-drag-handle]',
   animation: 320
 } as Parameters<typeof useSortable>[2])
 
-function onAddPicture(event: File[] | null | undefined) {
-  if (!event) return
-  console.log(event)
-  pictures.value.push({ title: '', image: `https://picsum.photos/512/512/?r=${Math.random()}` })
+async function onAddPicture(event: File[] | null | undefined) {
+  if (!event
+  ) return
+  files.value = event
+}
+
+async function onUploadArtistPicture() {
+  if (files.value.length === 0 || uploading.value) return
+  uploading.value = true
+  try {
+    const uploadedFiles = await upload(files.value)
+    pictures.value = uploadedFiles.map(file => ({ title: '', image: `/images/${file.pathname}` }))
+    toast.add({
+      title: 'Képek feltöltve',
+      description: `${uploadedFiles.length} kép sikeresen feltöltve.`,
+      color: 'success'
+    })
+  } catch (error) {
+    toast.add({
+      title: 'Sikertelen képfeltöltés',
+      description: error instanceof Error ? error.message : 'A képek feltöltése nem sikerült.',
+      color: 'error'
+    })
+  } finally {
+    uploading.value = false
+  }
 }
 </script>
 
@@ -20,7 +49,7 @@ function onAddPicture(event: File[] | null | undefined) {
   <UFileUpload
     multiple
     label="Drop your images here"
-    description="SVG, PNG, JPG or GIF (max. 2MB)"
+    description="PNG, JPG, WebP or GIF (max. 1MB)"
     :ui="{
       base: 'min-h-56', files: 'md:grid-cols-6 grid-cols-2'
     }"
@@ -32,6 +61,9 @@ function onAddPicture(event: File[] | null | undefined) {
       variant="solid"
       icon="i-ph-upload"
       label="Feltöltés"
+      :loading="uploading"
+      :disabled="uploading || files.length === 0"
+      @click="onUploadArtistPicture"
     />
   </div>
 
@@ -49,12 +81,12 @@ function onAddPicture(event: File[] | null | undefined) {
   >
     <li
       v-for="(picture, index) in pictures"
-      :key="picture.title"
+      :key="picture.image"
     >
       <UBlogPost
         orientation="horizontal"
         variant="outline"
-        :image="picture.image"
+        :image="{ src: picture.image, provider: 'none' }"
         :ui="{ root: 'items-center lg:flex lg:flex-row', header: 'lg:w-64 shrink-0', body: 'flex-1' }"
       >
         <template #footer>

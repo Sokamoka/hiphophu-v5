@@ -62,6 +62,12 @@ are registered automatically, and existing users are signed in.
 
 ## Production
 
+Uploaded artist images are served from R2 through `/images/<pathname>`.
+Their previews use Nuxt Image's `none` provider to load this endpoint directly:
+the default IPX filesystem source cannot read blobs stored in R2.
+The `none` provider is registered through `image.none` in `nuxt.config.ts`;
+IPX remains the default for other images.
+
 User profiles use `name` (the `nickname` field has been removed). Signup collects
 name, email, password, and optional location. Language (`hu` by default) and theme
 (`light`, `dark`, or `system`, defaulting to `system`) are edited in Settings
