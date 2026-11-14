@@ -78,6 +78,38 @@ const active = computed({
           :ui="{ root: 'size-56', fallback: 'text-7xl', icon: 'size-16' }"
           class="mx-auto"
         />
+
+        <template #links>
+          <UAvatarGroup>
+            <ULink
+              v-for="(link, index) in artist.links"
+              :key="index"
+              :to="link.url"
+              target="_blank"
+              class="hover:ring-primary transition hover:z-50"
+              raw
+            >
+              <UAvatar
+                :icon="link.platform === 'site' ? 'i-ph-globe': `i-simple-icons-${link.platform}`"
+                size="2xl"
+              />
+            </ULink>
+          </UAvatarGroup>
+        </template>
+
+        <template #bottom>
+          BOTTOM
+        </template>
+        <template #headline>
+          <UBadge
+            v-for="category in artist.category"
+            :key="category"
+            :label="category"
+            color="neutral"
+            size="md"
+            class="rounded-full not-last-of-type:me-3"
+          />
+        </template>
       </UPageHero>
 
       <UTabs

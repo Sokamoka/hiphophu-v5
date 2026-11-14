@@ -51,6 +51,7 @@ provide('navigation', navigation)
         :navigation="navigation"
         :links="navLinks"
         :fuse="{ resultLimit: 42 }"
+        :color-mode="false"
       />
     </ClientOnly>
   </UApp>

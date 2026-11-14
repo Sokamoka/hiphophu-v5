@@ -53,24 +53,24 @@ watch(searchOpen, (value) => {
 
 const items = computed(() => [
   [
-
+    {
+      label: 'Mind',
+      to: '/c',
+      active: isDocs.value
+    },
     {
       label: 'Zene',
-      to: '/docs',
+      to: { path: '/c', query: { category: 'RAP,DJ,BEATBOX' } },
       active: isDocs.value
     },
     {
-      label: 'DJ',
-      to: '/docs',
-      active: isDocs.value
-    },
-    {
-      label: 'Break Tánc',
-      to: '/a/break'
+      label: 'Tánc',
+      to: { path: '/c', query: { category: 'DANCE' } },
+      active: route.query.category === 'DANCE'
     },
     {
       label: 'Graffiti',
-      to: '/docs',
+      to: { path: '/c', query: { category: 'GRAFFITI' } },
       active: isDocs.value
     }
 

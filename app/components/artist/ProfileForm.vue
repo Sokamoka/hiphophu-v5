@@ -26,7 +26,7 @@ const platforms = [
   { label: 'Facebook', value: 'facebook', icon: 'i-simple-icons-facebook' },
   { label: 'TikTok', value: 'tiktok', icon: 'i-simple-icons-tiktok' },
   { label: 'Spotify', value: 'spotify', icon: 'i-simple-icons-spotify' },
-  { label: 'Apple Music', value: 'apple', icon: 'i-simple-icons-applemusic' },
+  { label: 'Apple Music', value: 'applemusic', icon: 'i-simple-icons-applemusic' },
   { label: 'YouTube Music', value: 'youtubemusic', icon: 'i-simple-icons-youtubemusic' },
   { label: 'LinkedIn', value: 'linkedin', icon: 'i-simple-icons-linkedin' }
 ]

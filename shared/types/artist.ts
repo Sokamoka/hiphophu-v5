@@ -10,6 +10,7 @@ export type ArtistLink = z.output<typeof artistLinkSchema>
 export const artistCategories = [
   'RAP',
   'DANCE',
+  'BREAK',
   'GRAFFITI',
   'DJ',
   'BEATBOX'
