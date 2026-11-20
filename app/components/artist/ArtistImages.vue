@@ -6,8 +6,10 @@ const el = useTemplateRef('el')
 const files = shallowRef<File[]>([])
 const toast = useToast()
 const uploading = ref(false)
+const route = useRoute()
+const artistId = String(route.params.id)
 
-const upload = useUpload('/api/artists/upload-artist-pictures', {
+const upload = useUpload(`/api/artists/upload-artist-pictures?artistId=${encodeURIComponent(artistId)}`, {
   multiple: true
 })
 
@@ -26,7 +28,9 @@ async function onUploadArtistPicture() {
   if (files.value.length === 0 || uploading.value) return
   uploading.value = true
   try {
-    const uploadedFiles = await upload(files.value)
+    const webpFiles = await convertToWebP(files.value)
+    const uploadedFiles = await upload(webpFiles)
+    files.value = []
     pictures.value = uploadedFiles.map(file => ({ title: '', image: `/images/${file.pathname}` }))
     toast.add({
       title: 'Képek feltöltve',
@@ -48,6 +52,8 @@ async function onUploadArtistPicture() {
 <template>
   <UFileUpload
     multiple
+    :model-value="files"
+    :disabled="uploading"
     label="Drop your images here"
     description="PNG, JPG, WebP or GIF (max. 1MB)"
     :ui="{
