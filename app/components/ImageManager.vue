@@ -5,11 +5,15 @@ const props = defineProps<{
   outputHeight?: number
 }>()
 
+const emit = defineEmits<{
+  confirm: [result: ImageCropperResult]
+}>()
+
 const imageCropperRef = useTemplateRef('ImageCropper')
+const fileInputRef = useTemplateRef<HTMLInputElement>('InputRef')
 const open = ref(false)
-const fileRef = ref<HTMLInputElement>()
-const selectedFileRef = ref<string>()
-const croppedFileRef = ref<string>()
+const selectedFile = ref<string>()
+const croppedFileRef = ref<ImageCropperResult>()
 
 const aspectRatio = computed(() => ((props.outputWidth || 1) / (props.outputHeight || 1)))
 
@@ -20,12 +24,12 @@ function onFileChange(e: Event) {
     return
   }
 
-  selectedFileRef.value = URL.createObjectURL(input.files[0]!)
+  selectedFile.value = URL.createObjectURL(input.files[0]!)
   open.value = true
 }
 
 function onFileClick() {
-  fileRef.value?.click()
+  fileInputRef.value?.click()
 }
 
 function onModalConfirmCrop() {
@@ -34,19 +38,26 @@ function onModalConfirmCrop() {
 }
 function onConfirmCrop(e: ImageCropperResult) {
   console.log(e)
-  croppedFileRef.value = e.dataUrl ?? ''
+  croppedFileRef.value = e
 }
 
 function onDelete() {
-  fileRef.value = undefined
-  selectedFileRef.value = undefined
+  if (fileInputRef.value) {
+    fileInputRef.value.value = ''
+  }
+  selectedFile.value = undefined
   croppedFileRef.value = undefined
+}
+
+function onUpload() {
+  if (!croppedFileRef.value) return
+  emit('confirm', croppedFileRef.value)
 }
 </script>
 
 <template>
   <div :class="['flex gap-5 w-full', { 'flex-col': orientation === 'vertical' }]">
-    <slot :file="croppedFileRef" />
+    <slot :file="croppedFileRef?.dataUrl ?? ''" />
 
     <div class="flex gap-3 items-start">
       <UButton
@@ -56,10 +67,10 @@ function onDelete() {
         @click="onFileClick"
       />
       <input
-        ref="fileRef"
+        ref="InputRef"
         type="file"
         class="hidden"
-        accept=".jpg, .jpeg, .png, .gif"
+        accept=".jpg, .jpeg, .png, .gif, .webp"
         @change="onFileChange"
       >
       <UButton
@@ -69,21 +80,22 @@ function onDelete() {
         @click="onDelete"
       />
       <UButton
-        v-if="selectedFileRef"
+        v-if="selectedFile"
         label="Upload"
         icon="i-ph-upload"
-        @click="onFileClick"
+        @click="onUpload"
       />
     </div>
 
     <UModal
       v-model:open="open"
       title="Kép méretre vágása"
+      :ui="{ footer: 'justify-end' }"
     >
       <template #body>
         <ImageCropper
           ref="ImageCropper"
-          :src="selectedFileRef ?? null"
+          :src="selectedFile ?? null"
           :show-controls="true"
           :output-width="outputWidth"
           :output-height="outputHeight"

@@ -8,6 +8,7 @@ const toast = useToast()
 const uploading = ref(false)
 const route = useRoute()
 const artistId = String(route.params.id)
+const maxFileSize = 1024 * 1024
 
 const upload = useUpload(`/api/artists/upload-artist-pictures?artistId=${encodeURIComponent(artistId)}`, {
   multiple: true
@@ -29,6 +30,16 @@ async function onUploadArtistPicture() {
   uploading.value = true
   try {
     const webpFiles = await convertToWebP(files.value)
+    const oversizedFiles = webpFiles.filter(file => file.size > maxFileSize)
+    if (oversizedFiles.length > 0) {
+      toast.add({
+        title: 'Túl nagy fájlméret',
+        description: `A konvertált képek legfeljebb 1 MB méretűek lehetnek. Túl nagy fájlok: ${oversizedFiles.map(file => file.name).join(', ')}`,
+        color: 'error'
+      })
+      return
+    }
+
     const uploadedFiles = await upload(webpFiles)
     files.value = []
     pictures.value = uploadedFiles.map(file => ({ title: '', image: `/images/${file.pathname}` }))
@@ -56,6 +67,7 @@ async function onUploadArtistPicture() {
     :disabled="uploading"
     label="Drop your images here"
     description="PNG, JPG, WebP or GIF (max. 1MB)"
+    accept="image/*"
     :ui="{
       base: 'min-h-56', files: 'md:grid-cols-6 grid-cols-2'
     }"
