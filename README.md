@@ -75,6 +75,10 @@ deploying. It moves local `pictures.avatar` and `pictures.header` references to
 the new columns without renaming existing files. External URLs aren't migrated;
 re-upload those images if needed.
 
+Deleting an avatar or hero image from the artist editor clears its column
+immediately and removes the blob from R2 unless the other profile image still
+references that file.
+
 User profiles use `name` (the `nickname` field has been removed). Signup collects
 name, email, password, and optional location. Language (`hu` by default) and theme
 (`light`, `dark`, or `system`, defaulting to `system`) are edited in Settings

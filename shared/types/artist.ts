@@ -48,6 +48,6 @@ export interface ArtistFormState {
   category: ArtistCategory[]
   description: string
   links: ArtistLink[]
-  avatar?: string
-  hero?: string
+  avatar?: string | null
+  hero?: string | null
 }

@@ -1,28 +1,19 @@
 <script setup lang="ts">
-const props = defineProps<{
-  modelValue: ArtistFormState
-}>()
+import type { ArtistFormState } from '~~/shared/types/artist'
+
+const profile = defineModel<ArtistFormState>({ required: true })
 
 const route = useRoute()
 const artistId = String(route.params.id)
 const toast = useToast()
 const uploading = ref(false)
+const deleting = ref<'avatar' | 'hero'>()
+const busy = computed(() => uploading.value || !!deleting.value)
 const maxFileSize = 1024 * 1024
-
-// const { data: artist, error: artistError } = await useFetch<{ avatar: string | null, hero: string | null }>(
-//   `/api/artists/${encodeURIComponent(artistId)}`
-// )
-
-// if (artistError.value) throw artistError.value
-
-const profile = reactive({
-  avatar: props.modelValue?.avatar,
-  hero: props.modelValue?.hero
-})
 
 async function uploadImage(field: 'avatar' | 'hero', payload: ImageCropperResult) {
   const file = payload.file
-  if (uploading.value) return
+  if (busy.value) return
 
   if (!file) {
     toast.add({
@@ -57,11 +48,10 @@ async function uploadImage(field: 'avatar' | 'hero', payload: ImageCropperResult
     formData.append('file', file)
 
     const options = { method: 'POST' as const, body: formData, query: { artistId } }
-    if (field === 'avatar') {
-      profile.avatar = (await $fetch('/api/artists/upload-artist-avatar', options)).avatar
-    } else {
-      profile.hero = (await $fetch('/api/artists/upload-artist-hero', options)).hero
-    }
+    const image = field === 'avatar'
+      ? await $fetch('/api/artists/upload-artist-avatar', options)
+      : await $fetch('/api/artists/upload-artist-hero', options)
+    profile.value = { ...profile.value, ...image }
     toast.add({
       title: field === 'avatar' ? 'Avatar feltöltve' : 'Hero kép feltöltve',
       color: 'success'
@@ -74,6 +64,31 @@ async function uploadImage(field: 'avatar' | 'hero', payload: ImageCropperResult
     })
   } finally {
     uploading.value = false
+  }
+}
+
+async function deleteImage(field: 'avatar' | 'hero') {
+  if (busy.value || !profile.value[field]) return
+
+  deleting.value = field
+  try {
+    const { filename } = await $fetch('/api/artists/profile-image', {
+      method: 'DELETE',
+      query: { artistId, field }
+    })
+    profile.value = { ...profile.value, [field]: filename }
+    toast.add({
+      title: field === 'avatar' ? 'Avatar törölve' : 'Borítókép törölve',
+      color: 'success'
+    })
+  } catch (error) {
+    toast.add({
+      title: 'Sikertelen képtörlés',
+      description: error instanceof Error ? error.message : 'A kép törlése nem sikerült.',
+      color: 'error'
+    })
+  } finally {
+    deleting.value = undefined
   }
 }
 </script>
@@ -92,10 +107,15 @@ async function uploadImage(field: 'avatar' | 'hero', payload: ImageCropperResult
       <div class="flex flex-wrap items-center gap-3">
         <ImageManager
           v-slot="{ file }"
+          :key="profile.avatar ?? undefined"
           orientation="vertical"
           :output-width="256"
           :output-height="256"
+          :has-saved-image="!!profile.avatar"
+          :disabled="busy"
+          :deleting="deleting === 'avatar'"
           @confirm="uploadImage('avatar', $event)"
+          @delete="deleteImage('avatar')"
         >
           <UAvatar
             :src="file || artistImageUrl(artistId, profile.avatar)"
@@ -118,10 +138,15 @@ async function uploadImage(field: 'avatar' | 'hero', payload: ImageCropperResult
       <div class="flex flex-wrap items-center gap-3">
         <ImageManager
           v-slot="{ file }"
+          :key="profile.hero ?? undefined"
           orientation="vertical"
           :output-width="1280"
           :output-height="720"
+          :has-saved-image="!!profile.hero"
+          :disabled="busy"
+          :deleting="deleting === 'hero'"
           @confirm="uploadImage('hero', $event)"
+          @delete="deleteImage('hero')"
         >
           <div class="aspect-video border border-dashed border-muted">
             <img

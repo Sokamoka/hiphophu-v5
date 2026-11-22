@@ -3,10 +3,14 @@ const props = defineProps<{
   orientation?: 'vertical' | 'horizontal'
   outputWidth?: number
   outputHeight?: number
+  hasSavedImage?: boolean
+  disabled?: boolean
+  deleting?: boolean
 }>()
 
 const emit = defineEmits<{
   confirm: [result: ImageCropperResult]
+  delete: []
 }>()
 
 const imageCropperRef = useTemplateRef('ImageCropper')
@@ -16,6 +20,7 @@ const selectedFile = ref<string>()
 const croppedFileRef = ref<ImageCropperResult>()
 
 const aspectRatio = computed(() => ((props.outputWidth || 1) / (props.outputHeight || 1)))
+const deletesSavedImage = computed(() => props.hasSavedImage && !croppedFileRef.value)
 
 function onFileChange(e: Event) {
   const input = e.target as HTMLInputElement
@@ -24,6 +29,7 @@ function onFileChange(e: Event) {
     return
   }
 
+  if (selectedFile.value) URL.revokeObjectURL(selectedFile.value)
   selectedFile.value = URL.createObjectURL(input.files[0]!)
   open.value = true
 }
@@ -42,12 +48,22 @@ function onConfirmCrop(e: ImageCropperResult) {
 }
 
 function onDelete() {
+  if (deletesSavedImage.value) {
+    emit('delete')
+    return
+  }
+
   if (fileInputRef.value) {
     fileInputRef.value.value = ''
   }
+  if (selectedFile.value) URL.revokeObjectURL(selectedFile.value)
   selectedFile.value = undefined
   croppedFileRef.value = undefined
 }
+
+onUnmounted(() => {
+  if (selectedFile.value) URL.revokeObjectURL(selectedFile.value)
+})
 
 function onUpload() {
   if (!croppedFileRef.value) return
@@ -64,6 +80,7 @@ function onUpload() {
         label="Choose"
         variant="subtle"
         icon="i-ph-image-square"
+        :disabled="disabled"
         @click="onFileClick"
       />
       <input
@@ -71,18 +88,24 @@ function onUpload() {
         type="file"
         class="hidden"
         accept=".jpg, .jpeg, .png, .gif, .webp"
+        :disabled="disabled"
         @change="onFileChange"
       >
       <UButton
+        v-if="hasSavedImage || selectedFile"
         color="error"
         variant="subtle"
         icon="i-ph-x"
+        :aria-label="deletesSavedImage ? 'Kép törlése' : 'Kiválasztás törlése'"
+        :disabled="disabled"
+        :loading="deleting"
         @click="onDelete"
       />
       <UButton
         v-if="selectedFile"
         label="Upload"
         icon="i-ph-upload"
+        :disabled="disabled"
         @click="onUpload"
       />
     </div>

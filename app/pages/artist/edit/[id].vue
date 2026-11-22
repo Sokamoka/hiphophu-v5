@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { FormSubmitEvent, NavigationMenuItem } from '@nuxt/ui'
 import * as z from 'zod'
-import { artistCategorySchema, artistLinkUrlSchema } from '~~/shared/types/artist'
+import { artistCategorySchema, artistLinkUrlSchema, type ArtistFormState } from '~~/shared/types/artist'
 
 definePageMeta({
   path: '/u/artist/edit/:id',
@@ -25,7 +25,7 @@ const artistSchema = z.object({
 type ArtistDetails = z.output<typeof artistSchema>
 
 const route = useRoute()
-const { data: artist, status, error } = await useFetch<ArtistDetails>(() => `/api/artists/${route.params.id}`, {
+const { data: artist, status, error } = await useFetch<ArtistFormState>(() => `/api/artists/${route.params.id}`, {
   deep: true
 })
 
