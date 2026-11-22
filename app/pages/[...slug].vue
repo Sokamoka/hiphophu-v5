@@ -76,10 +76,13 @@ const active = computed({
         :description="artist.description || undefined"
         orientation="horizontal"
       >
-        <template #top>
+        <template
+          v-if="heroUrl"
+          #top
+        >
           <div class="absolute inset-0 -z-10">
             <img
-              :src="heroUrl ?? 'https://placehold.co/600x400'"
+              :src="heroUrl"
               :alt="artist.name"
               class="size-full object-cover"
             >
