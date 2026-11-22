@@ -1,5 +1,11 @@
 {
   "signIn": "Sign In",
   "signUp": "Sign Up",
-  "logout": "Log Out"
+  "logout": "Log Out",
+  "button": {
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "upload": "Upload",
+    "chooseImage": "Select Image"
+  }
 }

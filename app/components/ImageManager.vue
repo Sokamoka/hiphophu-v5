@@ -77,7 +77,7 @@ function onUpload() {
 
     <div class="flex gap-3 items-start">
       <UButton
-        label="Choose"
+        :label="$ts('button.chooseImage')"
         variant="subtle"
         icon="i-ph-image-square"
         :disabled="disabled"
@@ -103,7 +103,7 @@ function onUpload() {
       />
       <UButton
         v-if="selectedFile"
-        label="Upload"
+        :label="$ts('button.upload')"
         icon="i-ph-upload"
         :disabled="disabled"
         @click="onUpload"

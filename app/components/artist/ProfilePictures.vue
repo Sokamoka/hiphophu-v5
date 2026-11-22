@@ -6,6 +6,7 @@ const profile = defineModel<ArtistFormState>({ required: true })
 const route = useRoute()
 const artistId = String(route.params.id)
 const toast = useToast()
+const modal = useConfirmModal()
 const uploading = ref(false)
 const deleting = ref<'avatar' | 'hero'>()
 const busy = computed(() => uploading.value || !!deleting.value)
@@ -69,6 +70,10 @@ async function uploadImage(field: 'avatar' | 'hero', payload: ImageCropperResult
 
 async function deleteImage(field: 'avatar' | 'hero') {
   if (busy.value || !profile.value[field]) return
+
+  const instance = modal.open()
+  if (!(await instance.result))
+    return
 
   deleting.value = field
   try {
@@ -148,7 +153,16 @@ async function deleteImage(field: 'avatar' | 'hero') {
           @confirm="uploadImage('hero', $event)"
           @delete="deleteImage('hero')"
         >
-          <div class="aspect-video border border-dashed border-muted">
+          <UEmpty
+            v-if="!profile.hero && !file"
+            icon="i-ph-image"
+            title="No hero Image selected"
+            description="It looks like you haven't added any projects. Create one to get started."
+          />
+          <div
+            v-else
+            class="aspect-video border border-dashed border-muted"
+          >
             <img
               v-if="file || profile.hero"
               :src="file || artistImageUrl(artistId, profile.hero)"

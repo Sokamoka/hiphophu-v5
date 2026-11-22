@@ -1,5 +1,11 @@
 {
   "signIn": "Belépés",
   "signUp": "Regisztráció",
-  "logout": "Kilépés"
+  "logout": "Kilépés",
+  "button": {
+    "cancel": "Mégsem",
+    "confirm": "Megerősítés",
+    "upload": "Feltöltés",
+    "chooseImage": "Kép kiválasztása"
+  }
 }
