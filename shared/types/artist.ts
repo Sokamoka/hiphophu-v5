@@ -12,6 +12,19 @@ export const artistLinkSchema = z.object({
   url: artistLinkUrlSchema
 })
 
+export const artistLinkPlatformIcons = new Map<string, string>([
+  ['site', 'i-ph-globe'],
+  ['email', 'i-ph-envelope'],
+  ['youtube', 'i-simple-icons-youtube'],
+  ['instagram', 'i-simple-icons-instagram'],
+  ['facebook', 'i-simple-icons-facebook'],
+  ['tiktok', 'i-simple-icons-tiktok'],
+  ['spotify', 'i-simple-icons-spotify'],
+  ['applemusic', 'i-simple-icons-applemusic'],
+  ['youtubemusic', 'i-simple-icons-youtubemusic'],
+  ['linkedin', 'i-simple-icons-linkedin']
+])
+
 export type ArtistLink = z.output<typeof artistLinkSchema>
 
 export const artistCategories = [

@@ -4,7 +4,7 @@ import { useSortable } from '@vueuse/integrations/useSortable'
 import { kebabCase, splitByCase } from 'scule'
 import type { FormState, FormSubmitEvent, RadioGroupItem, SelectItem } from '@nuxt/ui'
 import { removeDiacritics } from '~/utils/string'
-import type { ArtistFormState } from '~~/shared/types/artist'
+import { artistLinkPlatformIcons, type ArtistFormState } from '~~/shared/types/artist'
 
 const props = defineProps<{
   schema: S
@@ -20,23 +20,31 @@ const siteUrl = 'https://hiphop.hu/'
 const linkPlaceholder = 'https://example.social/felhasznalo'
 
 const platforms = [
-  { label: 'Honlap', value: 'site', icon: 'i-ph-globe' },
-  { label: 'E-mail', value: 'email', icon: 'i-ph-envelope' },
-  { label: 'YouTube', value: 'youtube', icon: 'i-simple-icons-youtube' },
-  { label: 'Instagram', value: 'instagram', icon: 'i-simple-icons-instagram' },
-  { label: 'Facebook', value: 'facebook', icon: 'i-simple-icons-facebook' },
-  { label: 'TikTok', value: 'tiktok', icon: 'i-simple-icons-tiktok' },
-  { label: 'Spotify', value: 'spotify', icon: 'i-simple-icons-spotify' },
-  { label: 'Apple Music', value: 'applemusic', icon: 'i-simple-icons-applemusic' },
-  { label: 'YouTube Music', value: 'youtubemusic', icon: 'i-simple-icons-youtubemusic' },
-  { label: 'LinkedIn', value: 'linkedin', icon: 'i-simple-icons-linkedin' }
-]
+  { label: 'Honlap', value: 'site' },
+  { label: 'E-mail', value: 'email' },
+  { label: 'YouTube', value: 'youtube' },
+  { label: 'Instagram', value: 'instagram' },
+  { label: 'Facebook', value: 'facebook' },
+  { label: 'TikTok', value: 'tiktok' },
+  { label: 'Spotify', value: 'spotify' },
+  { label: 'Apple Music', value: 'applemusic' },
+  { label: 'YouTube Music', value: 'youtubemusic' },
+  { label: 'LinkedIn', value: 'linkedin' }
+].map(platform => ({
+  ...platform,
+  icon: artistLinkPlatformIcons.get(platform.value) ?? `i-simple-icons-${platform.value}`
+}))
 
 const el = useTemplateRef('el')
+const form = useTemplateRef('form')
 
 useSortable(el, artist.value.links, {
   handle: '[data-drag-handle]',
-  animation: 320
+  animation: 320,
+  onEnd: async () => {
+    await nextTick()
+    await form.value?.validate({ silent: true })
+  }
 } as Parameters<typeof useSortable>[2])
 
 const l = computed(() => (descriptionMaxLength - artist.value.description.length).toString())
@@ -78,6 +86,7 @@ function removeLink(index: number) {
 <template>
   <UForm
     id="artist-profile-form"
+    ref="form"
     :schema="props.schema"
     :state="artist as FormState<S>"
     @submit="emit('submit', $event)"
@@ -235,7 +244,7 @@ function removeLink(index: number) {
         </UEmpty>
         <template
           v-for="(socialLink, index) in artist.links"
-          :key="index"
+          :key="socialLink.platform"
         >
           <div class="flex gap-3 items-start">
             <UButton

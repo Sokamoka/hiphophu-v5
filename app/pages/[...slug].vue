@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { TabsItem } from '@nuxt/ui'
 
+import { artistLinkPlatformIcons } from '~~/shared/types/artist'
+
 const route = useRoute()
 const router = useRouter()
 const nameId = computed(() => {
@@ -98,13 +100,13 @@ const active = computed({
             <ULink
               v-for="(link, index) in artist.links"
               :key="index"
-              :to="link.url"
-              target="_blank"
+              :to="link.platform === 'email' ? `mailto:${link.url}` : link.url"
+              :target="link.platform === 'email' ? undefined : '_blank'"
               class="hover:ring-primary transition hover:z-50"
               raw
             >
               <UAvatar
-                :icon="link.platform === 'site' ? 'i-ph-globe': `i-simple-icons-${link.platform}`"
+                :icon="artistLinkPlatformIcons.get(link.platform) ?? `i-simple-icons-${link.platform}`"
                 size="2xl"
               />
             </ULink>
