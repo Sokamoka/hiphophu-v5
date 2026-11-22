@@ -1,13 +1,13 @@
 <script setup lang="ts">
+import type { ArtistProfilePictures } from '#components'
+
+const modelValue = defineModel<InstanceType<typeof ArtistProfilePictures>['$props']['modelValue']>({ required: true })
+
 definePageMeta({
   name: 'ProfileImages'
 })
-
-defineOptions({ inheritAttrs: false })
 </script>
 
 <template>
-  <div>
-    <ArtistProfilePictures />
-  </div>
+  <ArtistProfilePictures v-model="modelValue" />
 </template>

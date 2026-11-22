@@ -13,7 +13,7 @@ const cards = computed<(BlogPostProps & { id: string, isTeam: boolean })[]>(() =
   id: artist.id,
   title: artist.name,
   // description: artist.description ?? undefined,
-  image: artist.pictures?.avatar ?? artist.pictures?.header ?? 'https://www.ersteliga.hu/_upload/editor/650x650_A2.png',
+  image: artistImageUrl(artist.id, artist.avatar ?? artist.hero) ?? '',
   date: artist.publishedAt ?? artist.createdAt,
   isTeam: artist.isTeam,
   to: `/u/artist/edit/${artist.id}`

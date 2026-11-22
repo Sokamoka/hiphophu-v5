@@ -13,7 +13,7 @@ const { data: artists, status, error } = await useFetch('/api/artists/public', {
 const posts = computed<(BlogPostProps & { id: string, isTeam: boolean })[]>(() => (artists.value ?? []).map(artist => ({
   id: artist.id,
   title: artist.name,
-  image: artist.pictures?.avatar ?? artist.pictures?.header ?? 'https://www.ersteliga.hu/_upload/editor/650x650_A2.png',
+  image: artistImageUrl(artist.id, artist.avatar ?? artist.hero) ?? 'https://www.ersteliga.hu/_upload/editor/650x650_A2.png',
   date: artist.publishedAt ?? artist.createdAt,
   isTeam: artist.isTeam,
   to: `/${artist.nameId}`

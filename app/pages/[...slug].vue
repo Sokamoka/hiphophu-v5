@@ -14,13 +14,15 @@ const { data: artist, status, error } = await useFetch(
 
 const title = computed(() => artist.value?.name || 'Artist')
 const description = computed(() => artist.value?.description || `Ismerd meg ${title.value} adatlapját, videóit és képeit a HipHopHu-n.`)
+const avatarUrl = computed(() => artist.value ? artistImageUrl(artist.value.id, artist.value.avatar) : undefined)
+const heroUrl = computed(() => artist.value ? artistImageUrl(artist.value.id, artist.value.hero) : undefined)
 
 useSeoMeta({
   title,
   ogTitle: title,
   description,
   ogDescription: description,
-  ogImage: computed(() => artist.value?.pictures?.header || artist.value?.pictures?.avatar)
+  ogImage: computed(() => heroUrl.value ?? avatarUrl.value)
 })
 
 const items: TabsItem[] = [
@@ -74,9 +76,8 @@ const active = computed({
       >
         <template #top>
           <div class="absolute inset-0 -z-10">
-            <!-- v-if="artist.pictures?.header || artist.pictures?.avatar" -->
             <img
-              :src="artist.pictures?.header ?? 'https://placehold.co/600x400'"
+              :src="heroUrl ?? 'https://placehold.co/600x400'"
               :alt="artist.name"
               class="size-full object-cover"
             >
@@ -85,7 +86,9 @@ const active = computed({
           </div>
         </template>
         <UAvatar
+          :src="avatarUrl"
           :alt="artist.name"
+          provider="none"
           :ui="{ root: 'size-56', fallback: 'text-7xl', icon: 'size-16' }"
           class="mx-auto"
         />

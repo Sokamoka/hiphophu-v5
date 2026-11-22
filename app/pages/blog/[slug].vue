@@ -60,6 +60,7 @@ if (post.value.image?.src) {
           <UAvatar
             v-bind="author.avatar"
             alt="Author avatar"
+            provider="none"
             size="2xs"
           />
 

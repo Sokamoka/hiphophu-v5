@@ -68,6 +68,13 @@ the default IPX filesystem source cannot read blobs stored in R2.
 The `none` provider is registered through `image.none` in `nuxt.config.ts`;
 IPX remains the default for other images.
 
+Artist profile images are stored in R2 at `<artistId>/<filename>`. The
+`artists.avatar` and `artists.hero` columns hold only the filenames; new uploads
+use `<uuid>.webp`. Apply the `0005_artist_profile_images` D1 migration before
+deploying. It moves local `pictures.avatar` and `pictures.header` references to
+the new columns without renaming existing files. External URLs aren't migrated;
+re-upload those images if needed.
+
 User profiles use `name` (the `nickname` field has been removed). Signup collects
 name, email, password, and optional location. Language (`hu` by default) and theme
 (`light`, `dark`, or `system`, defaulting to `system`) are edited in Settings

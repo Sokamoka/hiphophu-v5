@@ -170,6 +170,7 @@ const items = computed(() => [
             <UAvatar
               :src="user.image || undefined"
               :alt="user.name"
+              provider="none"
               referrerpolicy="no-referrer"
             />
           </UButton>

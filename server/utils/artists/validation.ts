@@ -26,10 +26,6 @@ export const artistInputSchema = z.object({
   editor: list,
   links: z.array(artistLinkSchema).default([]),
   tags: list,
-  pictures: z
-    .object({ header: z.string().optional(), avatar: z.string().optional() })
-    .nullish()
-    .transform(v => v ?? {}),
   createdAt: dateField,
   updatedAt: dateField,
   publishedAt: dateField.nullish().transform(v => v ?? null)

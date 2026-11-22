@@ -21,6 +21,7 @@ const linkPlaceholder = 'https://example.social/felhasznalo'
 
 const platforms = [
   { label: 'Honlap', value: 'site', icon: 'i-ph-globe' },
+  { label: 'E-mail', value: 'email', icon: 'i-ph-envelope' },
   { label: 'YouTube', value: 'youtube', icon: 'i-simple-icons-youtube' },
   { label: 'Instagram', value: 'instagram', icon: 'i-simple-icons-instagram' },
   { label: 'Facebook', value: 'facebook', icon: 'i-simple-icons-facebook' },

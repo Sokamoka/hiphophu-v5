@@ -27,7 +27,8 @@ export default defineEventHandler(async (event) => {
       isTeam: artists.isTeam,
       description: artists.description,
       category: artists.category,
-      pictures: artists.pictures,
+      avatar: artists.avatar,
+      hero: artists.hero,
       createdAt: artists.createdAt,
       publishedAt: artists.publishedAt
     })

@@ -17,7 +17,8 @@ export const artists = sqliteTable('artists', {
   images: stringArray('images'),
   editor: stringArray('editor'),
   links: text('links', { mode: 'json' }).$type<ArtistLink[]>().notNull().$defaultFn(() => []),
-  pictures: text('pictures', { mode: 'json' }).$type<{ header?: string, avatar?: string }>(),
+  avatar: text('avatar'),
+  hero: text('hero'),
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
   updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull(),
   publishedAt: integer('published_at', { mode: 'timestamp' })
