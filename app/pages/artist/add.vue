@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import * as z from 'zod'
 import type { FormSubmitEvent } from '@nuxt/ui'
-import { artistCategories } from '~~/shared/types/artist'
+import { artistCategorySchema, artistLinkUrlSchema } from '~~/shared/types/artist'
 
 definePageMeta({
   path: '/u/artist/add',
@@ -9,21 +9,21 @@ definePageMeta({
   roles: ['ADMIN', 'USER']
 })
 
-const userSchema = z.object({
+const artistFormSchema = z.object({
   isActive: z.boolean(),
   name: z.string().min(2, 'Too short'),
   nameId: z.string().min(2, 'Required'),
   isTeam: z.boolean().nullable().refine(value => value !== null, 'Required'),
-  category: z.array(z.enum(artistCategories)).min(1, 'Required'),
+  category: z.array(artistCategorySchema).min(1, 'Required'),
   description: z.string(),
   links: z.array(z.object({
     platform: z.string(),
-    url: z.string().min(1, 'Required').url('Invalid URL')
+    url: artistLinkUrlSchema
   }))
 })
 
-type UserForm = z.output<typeof userSchema>
-type UserFormState = z.input<typeof userSchema>
+type UserForm = z.output<typeof artistFormSchema>
+type UserFormState = z.input<typeof artistFormSchema>
 
 const toast = useToast()
 const saving = ref(false)
@@ -68,7 +68,7 @@ async function onSubmit({ data }: FormSubmitEvent<UserForm>) {
         /> -->
         <ArtistProfileForm
           v-model="artist"
-          :schema="userSchema"
+          :schema="artistFormSchema"
           @submit="onSubmit"
         >
           <UPageCard

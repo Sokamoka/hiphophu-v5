@@ -1,6 +1,6 @@
 import { and, desc, eq, or, sql } from 'drizzle-orm'
 import { z } from 'zod'
-import { artistCategories } from '../../../shared/types/artist'
+import { artistCategorySchema } from '../../../shared/types/artist'
 import { artists } from '../../database/schema'
 import { useDrizzle } from '../../utils/drizzle'
 
@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
   const categoryValues: string[] = (Array.isArray(rawCategories) ? rawCategories : [rawCategories])
     .filter((category): category is string => typeof category === 'string')
   const categories = categoryValues.flatMap((category: string) => category.split(',').map((value: string) => value.trim()).filter(Boolean))
-  const parsedCategories = z.array(z.enum(artistCategories)).safeParse(categories)
+  const parsedCategories = z.array(artistCategorySchema).safeParse(categories)
 
   if (!parsedCategories.success) {
     throw createError({ statusCode: 400, statusMessage: 'Invalid artist category' })

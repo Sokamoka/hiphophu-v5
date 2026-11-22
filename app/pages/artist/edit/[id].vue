@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { FormSubmitEvent, NavigationMenuItem } from '@nuxt/ui'
 import * as z from 'zod'
+import { artistCategorySchema, artistLinkUrlSchema } from '~~/shared/types/artist'
 
 definePageMeta({
   path: '/u/artist/edit/:id',
@@ -13,11 +14,11 @@ const artistSchema = z.object({
   name: z.string().min(2, 'Too short'),
   nameId: z.string().min(2, 'Required'),
   isTeam: z.boolean().nullable().refine(value => value !== null, 'Required'),
-  category: z.array(z.enum(artistCategories)).min(1, 'Required'),
+  category: z.array(artistCategorySchema).min(1, 'Required'),
   description: z.string(),
   links: z.array(z.object({
     platform: z.string(),
-    url: z.string().min(1, 'Required').url('Invalid URL')
+    url: artistLinkUrlSchema
   }))
 })
 

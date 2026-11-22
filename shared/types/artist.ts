@@ -1,8 +1,15 @@
 import { z } from 'zod'
 
+export const artistLinkUrlSchema = z.string()
+  .min(1, 'Required')
+  .refine(
+    value => !value || z.url().safeParse(value).success || z.email().safeParse(value).success,
+    'Invalid URL or email'
+  )
+
 export const artistLinkSchema = z.object({
   platform: z.string(),
-  url: z.url()
+  url: artistLinkUrlSchema
 })
 
 export type ArtistLink = z.output<typeof artistLinkSchema>
@@ -10,13 +17,15 @@ export type ArtistLink = z.output<typeof artistLinkSchema>
 export const artistCategories = [
   'RAP',
   'DANCE',
-  'BREAK',
   'GRAFFITI',
   'DJ',
-  'BEATBOX'
+  'BEATBOX',
+  'BEATMAKER'
 ] as const
 
-export type ArtistCategory = typeof artistCategories[number]
+export const artistCategorySchema = z.enum(artistCategories)
+
+export type ArtistCategory = z.output<typeof artistCategorySchema>
 
 export interface ArtistFormState {
   isActive: boolean
