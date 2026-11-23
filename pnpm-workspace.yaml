@@ -8,4 +8,4 @@ allowBuilds:
   workerd: true
 
 overrides:
-  h3: 1.15.11
+  "h3@1": 1.15.11

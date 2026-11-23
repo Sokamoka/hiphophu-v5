@@ -2,7 +2,7 @@
 import type * as z from 'zod'
 import { useSortable } from '@vueuse/integrations/useSortable'
 import { kebabCase, splitByCase } from 'scule'
-import type { FormState, FormSubmitEvent, RadioGroupItem, SelectItem } from '@nuxt/ui'
+import type { FormState, FormSubmitEvent, SelectItem, ToggleGroupItem } from '@nuxt/ui'
 import { removeDiacritics } from '~/utils/string'
 import { artistLinkPlatformIcons, type ArtistFormState } from '~~/shared/types/artist'
 
@@ -49,18 +49,25 @@ useSortable(el, artist.value.links, {
 
 const l = computed(() => (descriptionMaxLength - artist.value.description.length).toString())
 
-const typeItems = ref<RadioGroupItem[]>([
+const typeItems = ref<ToggleGroupItem[]>([
   {
     label: 'Művész',
-    value: false,
+    value: 'artist',
     class: 'w-20'
   },
   {
     label: 'Csapat',
-    value: true,
+    value: 'team',
     class: 'w-20'
   }
 ])
+
+const typeValue = computed({
+  get: () => artist.value.isTeam === null ? undefined : artist.value.isTeam ? 'team' : 'artist',
+  set: (value: string | undefined) => {
+    artist.value.isTeam = value === 'team' ? true : value === 'artist' ? false : null
+  }
+})
 
 const categoryItems = ref<SelectItem[]>(
   artistCategories.map(category => ({
@@ -186,13 +193,12 @@ function removeLink(index: number) {
         required
         class="flex max-sm:flex-col justify-between items-start gap-4"
       >
-        <URadioGroup
-          v-model="artist.isTeam"
-          indicator="hidden"
-          orientation="horizontal"
-          variant="table"
-          default-value="System"
+        <UToggleGroup
+          v-model="typeValue"
           :items="typeItems"
+          attached
+          variant="outline"
+          active-variant="subtle"
         />
       </UFormField>
 
