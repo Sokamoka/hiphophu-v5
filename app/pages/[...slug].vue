@@ -98,8 +98,11 @@ const active = computed({
           class="mx-auto"
         />
 
-        <template #links>
-          <UAvatarGroup>
+        <template
+          v-if="artist.links.length || artist.connections.length"
+          #links
+        >
+          <UAvatarGroup v-if="artist.links.length">
             <ULink
               v-for="(link, index) in artist.links"
               :key="index"
@@ -114,11 +117,29 @@ const active = computed({
               />
             </ULink>
           </UAvatarGroup>
+          <UAvatarGroup v-if="artist.connections.length">
+            <ULink
+              v-for="connection in artist.connections"
+              :key="connection.id"
+              :to="`/${connection.nameId}`"
+              :aria-label="connection.name"
+              :title="connection.name"
+              class="hover:ring-primary transition hover:z-50"
+              raw
+            >
+              <UAvatar
+                :src="artistImageUrl(connection.id, connection.avatar)"
+                :alt="connection.name"
+                provider="none"
+                size="2xl"
+              />
+            </ULink>
+          </UAvatarGroup>
         </template>
 
-        <template #bottom>
+        <!-- <template #bottom>
           BOTTOM
-        </template>
+        </template> -->
         <template #headline>
           <UBadge
             v-for="category in artist.category"

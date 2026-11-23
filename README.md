@@ -93,6 +93,11 @@ Artist links are stored in `artists.links` as a JSON array of
 `{ platform, url }` objects. Array order is display order; reordering only requires
 saving the reordered array, not a separate position field.
 
+The artist profile form lets editors search and select related artists by name.
+The selected artist IDs are stored as a JSON array in `artists.connections`.
+Public artist profiles display active connections in saved order as linked
+avatars next to the external links.
+
 Apply the `0003_artist_link_objects` D1 migration before deploying the new link
 format. It preserves existing URLs and their order, assigning `site` to legacy
 string links because their original platforms were not stored. Already structured

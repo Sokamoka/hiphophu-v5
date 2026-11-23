@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import * as z from 'zod'
 import type { FormSubmitEvent } from '@nuxt/ui'
-import { artistCategorySchema, artistLinkUrlSchema } from '~~/shared/types/artist'
+import { artistCategorySchema, artistConnectionsSchema, artistLinkUrlSchema } from '~~/shared/types/artist'
 
 definePageMeta({
   path: '/u/artist/add',
@@ -15,6 +15,7 @@ const artistFormSchema = z.object({
   nameId: z.string().min(2, 'Required'),
   isTeam: z.boolean().nullable().refine(value => value !== null, 'Required'),
   category: z.array(artistCategorySchema).min(1, 'Required'),
+  connections: artistConnectionsSchema,
   description: z.string(),
   links: z.array(z.object({
     platform: z.string(),
@@ -34,6 +35,7 @@ const artist = reactive<UserFormState>({
   nameId: '',
   isTeam: null,
   category: [],
+  connections: [],
   description: '',
   links: []
 })

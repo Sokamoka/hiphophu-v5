@@ -69,6 +69,9 @@ const categoryItems = ref<SelectItem[]>(
   }))
 )
 
+const { data: artistOptions, status: artistOptionsStatus, error: artistOptionsError } = useLazyFetch('/api/artists/options')
+const items = computed(() => artistOptions.value?.filter(option => option.id !== artist.value.id) ?? [])
+
 function createPageName() {
   const name = splitByCase(removeDiacritics(artist.value.name), ['-', '_', '/', '.', ' '])
   artist.value.nameId = kebabCase(name)
@@ -191,6 +194,38 @@ function removeLink(index: number) {
           default-value="System"
           :items="typeItems"
         />
+      </UFormField>
+
+      <USeparator />
+
+      <UFormField
+        name="connections"
+        label="Kapcsolódó előadók"
+        description="Név alapján kereshetsz, és több előadót is kiválaszthatsz."
+        class="flex max-sm:flex-col justify-between items-start gap-4"
+      >
+        <div class="w-96">
+          <UInputMenu
+            v-model="artist.connections"
+            :items="items"
+            value-key="id"
+            label-key="name"
+            placeholder="Keresés az előadók között"
+            :loading="artistOptionsStatus === 'pending'"
+            :disabled="artistOptionsStatus !== 'success'"
+            multiple
+            virtualize
+            class="w-full"
+            :ui="{ tagsItem: 'bg-primary text-inverted' }"
+          />
+          <p
+            v-if="artistOptionsError"
+            role="alert"
+            class="mt-2 text-sm text-error"
+          >
+            Az előadók listáját nem sikerült betölteni.
+          </p>
+        </div>
       </UFormField>
 
       <USeparator />

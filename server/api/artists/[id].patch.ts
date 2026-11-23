@@ -3,7 +3,7 @@ import * as z from 'zod'
 import { artists } from '../../database/schema'
 import { requireRole } from '../../utils/auth'
 import { useDrizzle } from '../../utils/drizzle'
-import { artistCategorySchema, artistLinkSchema } from '../../../shared/types/artist'
+import { artistCategorySchema, artistConnectionsSchema, artistLinkSchema } from '../../../shared/types/artist'
 
 const bodySchema = z.object({
   isActive: z.boolean(),
@@ -11,6 +11,7 @@ const bodySchema = z.object({
   nameId: z.string().min(2),
   isTeam: z.boolean(),
   category: z.array(artistCategorySchema).min(1),
+  connections: artistConnectionsSchema.optional(),
   description: z.string(),
   links: z.array(artistLinkSchema)
 })

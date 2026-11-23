@@ -1,5 +1,5 @@
 import * as z from 'zod'
-import { artistCategorySchema, artistLinkSchema } from '../../../shared/types/artist'
+import { artistCategorySchema, artistConnectionsSchema, artistLinkSchema } from '../../../shared/types/artist'
 import { requireRole } from '../../utils/auth'
 import { useDrizzle } from '../../utils/drizzle'
 import { saveArtist } from '../../utils/artists/saveArtist'
@@ -9,6 +9,7 @@ const bodySchema = z.object({
   nameId: z.string().min(2),
   isTeam: z.boolean(),
   category: z.array(artistCategorySchema).min(1),
+  connections: artistConnectionsSchema.default([]),
   description: z.string(),
   links: z.array(artistLinkSchema)
 })

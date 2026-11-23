@@ -40,12 +40,16 @@ export const artistCategorySchema = z.enum(artistCategories)
 
 export type ArtistCategory = z.output<typeof artistCategorySchema>
 
+export const artistConnectionsSchema = z.array(z.string().min(1))
+
 export interface ArtistFormState {
+  id?: string
   isActive: boolean
   name: string
   nameId: string
   isTeam: boolean | null
   category: ArtistCategory[]
+  connections: string[]
   description: string
   links: ArtistLink[]
   avatar?: string | null
