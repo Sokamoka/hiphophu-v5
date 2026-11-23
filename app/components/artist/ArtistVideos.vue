@@ -132,7 +132,7 @@ async function onAddVideo({ data }: FormSubmitEvent<z.output<typeof schema>>) {
         :description="videoDescription(video.description, video.url)"
         :image="video.image"
         :badge="videoDurationLabel(video.duration)"
-        :ui="{ root: 'items-center lg:flex lg:flex-row', header: 'lg:w-64 shrink-0', body: 'flex-1' }"
+        :ui="{ root: 'items-center lg:flex lg:flex-row', header: 'lg:w-72 shrink-0 aspect-4/3', body: 'flex-1', description: 'text-sm', image: 'object-center' }"
       >
         <template #footer>
           <UButton
