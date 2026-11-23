@@ -2,9 +2,13 @@
 import type { FormSubmitEvent } from '@nuxt/ui'
 import * as z from 'zod'
 import { useSortable } from '@vueuse/integrations/useSortable'
+import type { StreamMedia } from '~~/shared/types/media'
+
+type ArtistVideo = Pick<StreamMedia, 'id' | 'type' | 'url' | 'thumbnail' | 'title' | 'description' | 'duration' | 'sortOrder'>
+type YouTubeVideo = Pick<ArtistVideo, 'url' | 'title' | 'description' | 'duration'> & { image?: string }
 
 const videoUrl = ref<string>('')
-const videos = ref<{ id: string, url: string, title: string, description: string, duration: string, image?: string }[]>([])
+const videos = ref<ArtistVideo[]>([])
 const VIDEO_DESCRIPTION_MAX_LENGTH = 256
 const schema = z.object({
   videoUrl: z.string().trim().pipe(z.url('Adj meg egy érvényes YouTube-linket.'))
@@ -12,11 +16,63 @@ const schema = z.object({
 
 const form = useTemplateRef('form')
 const el = useTemplateRef('el')
+const route = useRoute()
+const artistId = typeof route.params.id === 'string' ? route.params.id : ''
+const toast = useToast()
+const loadingVideos = ref(true)
+const deletingVideoId = ref<string>()
+let orderSave = Promise.resolve()
 
 useSortable(el, videos, {
   handle: '[data-drag-handle]',
-  animation: 320
+  animation: 320,
+  onUpdate: saveVideoOrder
 } as Parameters<typeof useSortable>[2])
+
+async function fetchVideos() {
+  if (!artistId) throw createError({ statusCode: 400, statusMessage: 'Artist ID is required' })
+
+  return await $fetch<ArtistVideo[]>(`/api/artists/${encodeURIComponent(artistId)}/media`, {
+    query: { type: 'video' }
+  })
+}
+
+async function loadVideos() {
+  try {
+    videos.value = await fetchVideos()
+  } catch (error) {
+    toast.add({
+      title: 'Sikertelen betöltés',
+      description: error instanceof Error ? error.message : 'A videók betöltése nem sikerült.',
+      color: 'error'
+    })
+  } finally {
+    loadingVideos.value = false
+  }
+}
+
+function saveVideoOrder() {
+  if (!artistId) return
+
+  const mediaIds = videos.value.map(video => video.id)
+  orderSave = orderSave.then(async () => {
+    try {
+      await $fetch(`/api/artists/${encodeURIComponent(artistId)}/media/reorder`, {
+        method: 'PATCH',
+        body: { mediaIds }
+      })
+    } catch (error) {
+      toast.add({
+        title: 'Sikertelen mentés',
+        description: error instanceof Error ? error.message : 'A videók sorrendjét nem sikerült menteni.',
+        color: 'error'
+      })
+      await loadVideos()
+    }
+  })
+
+  return orderSave
+}
 
 function videoDurationLabel(duration: string) {
   const match = /^P(?:(\d+)D)?(?:T(?=\d)(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?$/.exec(duration)
@@ -40,20 +96,34 @@ function videoDescription(description: string, url: string) {
     : text
 }
 
-async function onAddVideo({ data }: FormSubmitEvent<z.output<typeof schema>>) {
+async function deleteVideo(video: ArtistVideo) {
+  if (!artistId || deletingVideoId.value) return
+  deletingVideoId.value = video.id
+
   try {
-    const video = await $fetch('/api/youtube/video', {
+    await $fetch(`/api/artists/${encodeURIComponent(artistId)}/media/${encodeURIComponent(video.id)}`, {
+      method: 'DELETE'
+    })
+    videos.value = videos.value.filter(item => item.id !== video.id)
+    toast.add({ title: 'Videó eltávolítva', color: 'success' })
+  } catch (error) {
+    toast.add({
+      title: 'Sikertelen törlés',
+      description: error instanceof Error ? error.message : 'A videót nem sikerült eltávolítani.',
+      color: 'error'
+    })
+  } finally {
+    deletingVideoId.value = undefined
+  }
+}
+
+async function onAddVideo({ data }: FormSubmitEvent<z.output<typeof schema>>) {
+  let video: YouTubeVideo
+  try {
+    video = await $fetch<YouTubeVideo>('/api/youtube/video', {
       method: 'POST',
       body: { url: data.videoUrl }
     })
-
-    if (videos.value.some(item => item.id === video.id)) {
-      form.value?.setErrors([{ name: 'videoUrl', message: 'Ez a videó már hozzá van adva.' }])
-      return
-    }
-
-    videos.value.push(video)
-    videoUrl.value = ''
   } catch (error) {
     const status = error instanceof Error && 'statusCode' in error ? error.statusCode : undefined
     const message = status === 400
@@ -62,8 +132,55 @@ async function onAddVideo({ data }: FormSubmitEvent<z.output<typeof schema>>) {
         ? 'A videó nem található vagy nem érhető el.'
         : 'Nem sikerült lekérni a videó adatait.'
     form.value?.setErrors([{ name: 'videoUrl', message }])
+    return
+  }
+
+  if (videos.value.some(item => item.url === video.url)) {
+    form.value?.setErrors([{ name: 'videoUrl', message: 'Ez a videó már hozzá van adva.' }])
+    return
+  }
+
+  if (!video.image) {
+    form.value?.setErrors([{ name: 'videoUrl', message: 'A videóhoz nem érhető el bélyegkép.' }])
+    return
+  }
+
+  try {
+    const saved = await $fetch<{ id: string }>('/api/media', {
+      method: 'POST',
+      body: {
+        type: 'video',
+        url: video.url,
+        thumbnail: video.image,
+        title: video.title,
+        duration: video.duration,
+        description: video.description,
+        artists: [{ artistId, role: 'primary' }]
+      }
+    })
+
+    videos.value.unshift({
+      id: saved.id,
+      type: 'video',
+      url: video.url,
+      thumbnail: video.image,
+      title: video.title,
+      description: video.description,
+      duration: video.duration,
+      sortOrder: 0
+    })
+    videoUrl.value = ''
+    toast.add({ title: 'Videó mentve', color: 'success' })
+  } catch (error) {
+    toast.add({
+      title: 'Sikertelen mentés',
+      description: error instanceof Error ? error.message : 'A videót nem sikerült menteni.',
+      color: 'error'
+    })
   }
 }
+
+onMounted(loadVideos)
 </script>
 
 <template>
@@ -93,6 +210,7 @@ async function onAddVideo({ data }: FormSubmitEvent<z.output<typeof schema>>) {
           />
           <UButton
             :loading="loading"
+            :disabled="loadingVideos"
             variant="subtle"
             label="Hozzáadás"
             type="submit"
@@ -103,7 +221,7 @@ async function onAddVideo({ data }: FormSubmitEvent<z.output<typeof schema>>) {
   </UForm>
 
   <UEmpty
-    v-if="videos.length === 0"
+    v-if="!loadingVideos && videos.length === 0"
     icon="i-ph-video"
     title="No video added"
     description="It looks like you haven't added any projects. Create one to get started."
@@ -122,7 +240,7 @@ async function onAddVideo({ data }: FormSubmitEvent<z.output<typeof schema>>) {
     class="space-y-4"
   >
     <li
-      v-for="(video, index) in videos"
+      v-for="video in videos"
       :key="video.id"
     >
       <UBlogPost
@@ -130,7 +248,7 @@ async function onAddVideo({ data }: FormSubmitEvent<z.output<typeof schema>>) {
         variant="outline"
         :title="video.title"
         :description="videoDescription(video.description, video.url)"
-        :image="video.image"
+        :image="video.thumbnail"
         :badge="videoDurationLabel(video.duration)"
         :ui="{ root: 'items-center lg:flex lg:flex-row', header: 'lg:w-72 shrink-0 aspect-4/3', body: 'flex-1', description: 'text-sm', image: 'object-center' }"
       >
@@ -151,7 +269,9 @@ async function onAddVideo({ data }: FormSubmitEvent<z.output<typeof schema>>) {
             color="error"
             label="Törlés"
             size="xs"
-            @click="videos.splice(index, 1)"
+            :loading="deletingVideoId === video.id"
+            :disabled="!!deletingVideoId"
+            @click="deleteVideo(video)"
           />
         </template>
       </UBlogPost>
