@@ -8,6 +8,7 @@ declare module 'h3' {
         BETTER_AUTH_SECRET: string
         GOOGLE_CLIENT_ID: string
         GOOGLE_CLIENT_SECRET: string
+        YOUTUBE_API_KEY?: string
       }
     }
     _auth?: unknown

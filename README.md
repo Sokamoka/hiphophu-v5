@@ -60,6 +60,17 @@ consent screen is in testing mode, add the accounts you want to use as test user
 The Google button on both login and signup starts the same OAuth flow: new users
 are registered automatically, and existing users are signed in.
 
+## YouTube video metadata
+
+Enable **YouTube Data API v3** in Google Cloud and restrict the API key to that
+API. Set `YOUTUBE_API_KEY` in the local `.env` file and configure it as a
+server-side Cloudflare Pages secret for deployed environments. The artist video
+editor uses it to fetch the title, description, thumbnail, and duration.
+The endpoint returns `duration` in ISO 8601 format (for example, `PT3M42S`).
+The video editor shows it on each video card as `3:42`, or `1:02:05` for a video
+lasting an hour or more.
+The key is not sent to the browser.
+
 ## Production
 
 Uploaded artist images are served from R2 through `/images/<pathname>`.
