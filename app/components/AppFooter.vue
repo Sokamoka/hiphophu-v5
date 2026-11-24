@@ -88,7 +88,7 @@ const columns = [{
 
     <template #left>
       <p class="text-muted text-sm">
-        © {{ new Date().getFullYear() }} • hiphop.hu
+        ©2000-{{ new Date().getFullYear() }} • hiphop.hu
       </p>
     </template>
 

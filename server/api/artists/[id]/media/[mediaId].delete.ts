@@ -1,4 +1,5 @@
-import { and, eq, notExists } from 'drizzle-orm'
+import { blob } from 'hub:blob'
+import { and, eq, ne, notExists } from 'drizzle-orm'
 import { artistMedia, media } from '../../../../database/schema'
 import { requireEditableArtists } from '../../../../utils/media-permissions'
 import { useDrizzle } from '../../../../utils/drizzle'
@@ -20,6 +21,17 @@ export default defineEventHandler(async (event) => {
 
   if (!artistMediaLink) throw createError({ statusCode: 404, statusMessage: 'Media not found for this artist' })
 
+  const [mediaItem] = await db
+    .select({ type: media.type, url: media.url })
+    .from(media)
+    .where(eq(media.id, mediaId))
+    .limit(1)
+
+  const otherLinks = await db
+    .select({ artistId: artistMedia.artistId })
+    .from(artistMedia)
+    .where(and(eq(artistMedia.mediaId, mediaId), ne(artistMedia.artistId, artistId)))
+
   await db.batch([
     db.delete(artistMedia)
       .where(and(eq(artistMedia.artistId, artistId), eq(artistMedia.mediaId, mediaId))),
@@ -31,6 +43,13 @@ export default defineEventHandler(async (event) => {
           .where(eq(artistMedia.mediaId, media.id)))
       ))
   ])
+
+  if (mediaItem?.type === 'image' && otherLinks.length === 0) {
+    const imagePath = /^\/images\/([a-zA-Z0-9_-]+)\/([a-zA-Z0-9._-]+)$/.exec(mediaItem.url)
+    if (imagePath?.[1] && imagePath[2]) {
+      await blob.del(`${imagePath[1]}/${imagePath[2]}`)
+    }
+  }
 
   return { success: true }
 })

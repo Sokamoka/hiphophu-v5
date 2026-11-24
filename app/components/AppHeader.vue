@@ -116,8 +116,6 @@ const items = computed(() => [
     />
 
     <template #right>
-      <UColorModeButton v-if="!user" />
-
       <UContentSearchButton />
 
       <template v-if="!user">

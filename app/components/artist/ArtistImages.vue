@@ -1,14 +1,18 @@
 <script setup lang="ts">
 import { useSortable } from '@vueuse/integrations/useSortable'
+import type { ImageMedia } from '~~/shared/types/media'
 
-const pictures = ref<{ title: string, image: string }[]>([])
+const pictures = ref<ImageMedia[]>([])
 const el = useTemplateRef('el')
 const files = shallowRef<File[]>([])
 const toast = useToast()
 const uploading = ref(false)
+const loadingPictures = ref(true)
+const deletingPictureId = ref<string>()
 const route = useRoute()
 const artistId = String(route.params.id)
 const maxFileSize = 1024 * 1024
+let orderSave = Promise.resolve()
 
 const upload = useUpload(`/api/artists/upload-artist-pictures?artistId=${encodeURIComponent(artistId)}`, {
   multiple: true
@@ -16,13 +20,53 @@ const upload = useUpload(`/api/artists/upload-artist-pictures?artistId=${encodeU
 
 useSortable(el, pictures, {
   handle: '[data-drag-handle]',
-  animation: 320
+  animation: 320,
+  onUpdate: savePictureOrder
 } as Parameters<typeof useSortable>[2])
 
 async function onAddPicture(event: File[] | null | undefined) {
   if (!event
   ) return
   files.value = event
+}
+
+async function loadPictures() {
+  try {
+    pictures.value = await $fetch<ImageMedia[]>(`/api/artists/${encodeURIComponent(artistId)}/media`, {
+      query: { type: 'image' }
+    })
+  } catch (error) {
+    toast.add({
+      title: 'Sikertelen betöltés',
+      description: error instanceof Error ? error.message : 'A képek betöltése nem sikerült.',
+      color: 'error'
+    })
+  } finally {
+    loadingPictures.value = false
+  }
+}
+
+function savePictureOrder() {
+  if (!artistId) return
+
+  const mediaIds = pictures.value.map(picture => picture.id)
+  orderSave = orderSave.then(async () => {
+    try {
+      await $fetch(`/api/artists/${encodeURIComponent(artistId)}/media/reorder`, {
+        method: 'PATCH',
+        body: { mediaIds }
+      })
+    } catch (error) {
+      toast.add({
+        title: 'Sikertelen mentés',
+        description: error instanceof Error ? error.message : 'A képek sorrendjét nem sikerült menteni.',
+        color: 'error'
+      })
+      await loadPictures()
+    }
+  })
+
+  return orderSave
 }
 
 async function onUploadArtistPicture() {
@@ -42,7 +86,7 @@ async function onUploadArtistPicture() {
 
     const uploadedFiles = await upload(webpFiles)
     files.value = []
-    pictures.value = uploadedFiles.map(file => ({ title: '', image: `/images/${file.pathname}` }))
+    await loadPictures()
     toast.add({
       title: 'Képek feltöltve',
       description: `${uploadedFiles.length} kép sikeresen feltöltve.`,
@@ -58,6 +102,28 @@ async function onUploadArtistPicture() {
     uploading.value = false
   }
 }
+
+async function deletePicture(picture: ImageMedia) {
+  if (deletingPictureId.value) return
+  deletingPictureId.value = picture.id
+  try {
+    await $fetch(`/api/artists/${encodeURIComponent(artistId)}/media/${encodeURIComponent(picture.id)}`, {
+      method: 'DELETE'
+    })
+    pictures.value = pictures.value.filter(item => item.id !== picture.id)
+    toast.add({ title: 'Kép eltávolítva', color: 'success' })
+  } catch (error) {
+    toast.add({
+      title: 'Sikertelen törlés',
+      description: error instanceof Error ? error.message : 'A képet nem sikerült eltávolítani.',
+      color: 'error'
+    })
+  } finally {
+    deletingPictureId.value = undefined
+  }
+}
+
+onMounted(loadPictures)
 </script>
 
 <template>
@@ -86,7 +152,7 @@ async function onUploadArtistPicture() {
   </div>
 
   <UPageCard
-    v-if="pictures.length > 0"
+    v-if="pictures.length > 0 || loadingPictures"
     title="Feltöltött képek"
     variant="naked"
     orientation="horizontal"
@@ -98,13 +164,13 @@ async function onUploadArtistPicture() {
     class="mt-5 space-y-3"
   >
     <li
-      v-for="(picture, index) in pictures"
-      :key="picture.image"
+      v-for="picture in pictures"
+      :key="picture.id"
     >
       <UBlogPost
         orientation="horizontal"
         variant="outline"
-        :image="{ src: picture.image, provider: 'none' }"
+        :image="{ src: picture.url, provider: 'none' }"
         :ui="{ root: 'items-center lg:flex lg:flex-row', header: 'lg:w-64 shrink-0', body: 'flex-1' }"
       >
         <template #footer>
@@ -124,17 +190,14 @@ async function onUploadArtistPicture() {
             color="error"
             label="Törlés"
             size="xs"
-            @click="pictures.splice(index, 1)"
+            :loading="deletingPictureId === picture.id"
+            :disabled="!!deletingPictureId"
+            @click="deletePicture(picture)"
           />
         </template>
 
         <template #title>
-          <UFormField label="Képaláírás">
-            <UInput
-              v-model.lazy="picture.title"
-              class="w-full"
-            />
-          </UFormField>
+          {{ picture.title }}
         </template>
       </UBlogPost>
     </li>
