@@ -4,8 +4,8 @@ import * as z from 'zod'
 import { useSortable } from '@vueuse/integrations/useSortable'
 import type { StreamMedia } from '~~/shared/types/media'
 
-type ArtistVideo = Pick<StreamMedia, 'id' | 'type' | 'url' | 'thumbnail' | 'title' | 'description' | 'duration' | 'sortOrder'>
-type YouTubeVideo = Pick<ArtistVideo, 'url' | 'title' | 'description' | 'duration'> & { image?: string }
+type ArtistVideo = Pick<StreamMedia, 'id' | 'type' | 'sourceId' | 'thumbnail' | 'title' | 'description' | 'duration' | 'sortOrder'>
+type YouTubeVideo = Pick<ArtistVideo, 'title' | 'description' | 'duration'> & { id: string, image?: string }
 
 const videoUrl = ref<string>('')
 const videos = ref<ArtistVideo[]>([])
@@ -87,8 +87,8 @@ function videoDurationLabel(duration: string) {
   return `Időtartam: ${clock}`
 }
 
-function videoDescription(description: string, url: string) {
-  const text = description || url
+function videoDescription(description: string, sourceId: string) {
+  const text = description || `https://www.youtube.com/watch?v=${sourceId}`
   const characters = Array.from(text)
 
   return characters.length > VIDEO_DESCRIPTION_MAX_LENGTH
@@ -135,7 +135,7 @@ async function onAddVideo({ data }: FormSubmitEvent<z.output<typeof schema>>) {
     return
   }
 
-  if (videos.value.some(item => item.url === video.url)) {
+  if (videos.value.some(item => item.sourceId === video.id)) {
     form.value?.setErrors([{ name: 'videoUrl', message: 'Ez a videó már hozzá van adva.' }])
     return
   }
@@ -150,7 +150,7 @@ async function onAddVideo({ data }: FormSubmitEvent<z.output<typeof schema>>) {
       method: 'POST',
       body: {
         type: 'video',
-        url: video.url,
+        sourceId: video.id,
         thumbnail: video.image,
         title: video.title,
         duration: video.duration,
@@ -162,7 +162,7 @@ async function onAddVideo({ data }: FormSubmitEvent<z.output<typeof schema>>) {
     videos.value.unshift({
       id: saved.id,
       type: 'video',
-      url: video.url,
+      sourceId: video.id,
       thumbnail: video.image,
       title: video.title,
       description: video.description,
@@ -247,7 +247,7 @@ onMounted(loadVideos)
         orientation="horizontal"
         variant="outline"
         :title="video.title"
-        :description="videoDescription(video.description, video.url)"
+        :description="videoDescription(video.description, video.sourceId)"
         :image="video.thumbnail"
         :badge="videoDurationLabel(video.duration)"
         :ui="{ root: 'items-center lg:flex lg:flex-row', header: 'lg:w-72 shrink-0 aspect-4/3', body: 'flex-1', description: 'text-sm', image: 'object-center' }"

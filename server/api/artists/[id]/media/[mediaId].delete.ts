@@ -22,7 +22,7 @@ export default defineEventHandler(async (event) => {
   if (!artistMediaLink) throw createError({ statusCode: 404, statusMessage: 'Media not found for this artist' })
 
   const [mediaItem] = await db
-    .select({ type: media.type, url: media.url })
+    .select({ type: media.type, sourceId: media.sourceId })
     .from(media)
     .where(eq(media.id, mediaId))
     .limit(1)
@@ -45,10 +45,7 @@ export default defineEventHandler(async (event) => {
   ])
 
   if (mediaItem?.type === 'image' && otherLinks.length === 0) {
-    const imagePath = /^\/images\/([a-zA-Z0-9_-]+)\/([a-zA-Z0-9._-]+)$/.exec(mediaItem.url)
-    if (imagePath?.[1] && imagePath[2]) {
-      await blob.del(`${imagePath[1]}/${imagePath[2]}`)
-    }
+    await blob.del(mediaItem.sourceId)
   }
 
   return { success: true }

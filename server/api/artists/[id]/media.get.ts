@@ -16,7 +16,7 @@ export default defineEventHandler(async (event) => {
     .select({
       id: media.id,
       type: media.type,
-      url: media.url,
+      sourceId: media.sourceId,
       thumbnail: media.thumbnail,
       title: media.title,
       likes: media.likes,
@@ -56,7 +56,7 @@ export default defineEventHandler(async (event) => {
       return {
         id: item.id,
         type: item.type,
-        url: item.url,
+        sourceId: item.sourceId,
         thumbnail: item.thumbnail,
         title: item.title,
         likes: item.likes,
@@ -69,7 +69,7 @@ export default defineEventHandler(async (event) => {
     return {
       id: item.id,
       type: item.type,
-      url: item.url,
+      sourceId: item.sourceId,
       thumbnail: item.thumbnail,
       title: item.title,
       likes: item.likes,

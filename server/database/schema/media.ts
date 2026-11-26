@@ -6,7 +6,7 @@ import { artists } from './artists'
 export const media = sqliteTable('media', {
   id: text('id').primaryKey(),
   type: text('type', { enum: mediaTypes }).notNull(),
-  url: text('url').notNull(),
+  sourceId: text('source_id').notNull(),
   thumbnail: text('thumbnail').notNull(),
   title: text('title').notNull(),
   likes: integer('likes').notNull().default(0),

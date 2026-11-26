@@ -44,7 +44,6 @@ export default defineEventHandler(async (event) => {
     return {
       id,
       pathname,
-      url: `/images/${pathname}`,
       title: file.name.replace(/\.[^.]+$/, '').slice(0, 500) || 'Kép',
       sortOrder: (lastImage?.sortOrder ?? -1) + index + 1
     }
@@ -54,8 +53,8 @@ export default defineEventHandler(async (event) => {
     db.insert(media).values({
       id: image.id,
       type: 'image',
-      url: image.url,
-      thumbnail: image.url,
+      sourceId: image.pathname,
+      thumbnail: image.pathname,
       title: image.title
     }),
     db.insert(artistMedia).values({

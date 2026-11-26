@@ -1,28 +1,21 @@
 import * as z from 'zod'
-import { artistMediaRoles, mediaTypes } from '../../../shared/types/media'
+import { artistMediaRoles } from '../../../shared/types/media'
 import { artistMedia, media } from '../../database/schema'
 import { requireEditableArtists } from '../../utils/media-permissions'
 import { useDrizzle } from '../../utils/drizzle'
 
-const commonFields = {
-  url: z.string().max(2048).pipe(z.url()),
+const bodySchema = z.object({
+  type: z.literal('video'),
+  sourceId: z.string().regex(/^[\w-]{11}$/),
   thumbnail: z.string().max(2048).pipe(z.url()),
   title: z.string().min(1).max(500),
+  duration: z.string().min(1).max(100),
+  description: z.string(),
   artists: z.array(z.object({
     artistId: z.string().min(1),
     role: z.enum(artistMediaRoles)
   }).strict()).min(1)
-}
-
-const bodySchema = z.discriminatedUnion('type', [
-  z.object({ ...commonFields, type: z.literal('image') }).strict(),
-  z.object({
-    ...commonFields,
-    type: z.enum(mediaTypes).extract(['video', 'music']),
-    duration: z.string().min(1).max(100),
-    description: z.string()
-  }).strict()
-])
+}).strict()
 
 export default defineEventHandler(async (event) => {
   const body = bodySchema.safeParse(await readBody(event))
@@ -46,11 +39,11 @@ export default defineEventHandler(async (event) => {
     db.insert(media).values({
       id,
       type: data.type,
-      url: data.url,
+      sourceId: data.sourceId,
       thumbnail: data.thumbnail,
       title: data.title,
-      duration: data.type === 'image' ? null : data.duration,
-      description: data.type === 'image' ? null : data.description
+      duration: data.duration,
+      description: data.description
     }),
     firstArtistStatement,
     ...remainingArtistStatements

@@ -10,7 +10,8 @@ export default defineNuxtConfig({
     'nuxt-og-image',
     'nitro-cloudflare-dev',
     'nuxt-image-cropper',
-    '@nuxthub/core'
+    '@nuxthub/core',
+    '@nuxt/scripts'
   ],
 
   devtools: {
@@ -79,5 +80,13 @@ export default defineNuxtConfig({
       '/'
     ],
     crawlLinks: true
+  },
+
+  scripts: {
+    registry: {
+      youtubePlayer: {
+        trigger: 'onNuxtReady'
+      }
+    }
   }
 })

@@ -10,10 +10,10 @@ const nameId = computed(() => {
   return Array.isArray(slug) ? slug.at(-1) : slug
 })
 
-type GalleryImage = Pick<ImageMedia, 'id' | 'url' | 'thumbnail' | 'title'>
-type GalleryVideo = Pick<StreamMedia, 'id' | 'url' | 'thumbnail' | 'title' | 'description' | 'duration'>
+type GalleryImage = Pick<ImageMedia, 'id' | 'sourceId' | 'thumbnail' | 'title'>
+type GalleryVideo = Pick<StreamMedia, 'id' | 'sourceId' | 'thumbnail' | 'title' | 'description' | 'duration'>
 
-const videoUrl = ref('')
+const videoId = ref('')
 const selectedImage = ref<GalleryImage>()
 
 const { data: artist, status, error } = await useFetch(
@@ -83,10 +83,6 @@ const imageOpen = computed({
     if (!open) selectedImage.value = undefined
   }
 })
-
-function onCloseVideoPlayer() {
-  videoUrl.value = ''
-}
 </script>
 
 <template>
@@ -214,7 +210,7 @@ function onCloseVideoPlayer() {
 
           <div
             v-if="visibleMediaType === 'video' && videos.length"
-            class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3"
+            class="grid gap-5 sm:grid-cols-3 lg:grid-cols-4"
           >
             <UCard
               v-for="video in videos"
@@ -225,7 +221,7 @@ function onCloseVideoPlayer() {
                 type="button"
                 class="group w-full text-start"
                 :aria-label="`Videó lejátszása: ${video.title}`"
-                @click="videoUrl = video.url"
+                @click="videoId = video.sourceId"
               >
                 <div class="relative aspect-video overflow-hidden rounded-t-lg">
                   <img
@@ -233,10 +229,12 @@ function onCloseVideoPlayer() {
                     :alt="video.title"
                     class="size-full object-cover transition group-hover:scale-105"
                   >
-                  <UIcon
-                    name="i-lucide-play"
-                    class="absolute left-1/2 top-1/2 size-12 -translate-x-1/2 -translate-y-1/2 text-white drop-shadow-lg"
-                  />
+                  <div class="absolute left-1/2 top-1/2 size-16 -translate-x-1/2 -translate-y-1/2 text-white bg-default/70 rounded-full drop-shadow-lg grid place-items-center">
+                    <UIcon
+                      name="i-ph-play"
+                      class="size-12"
+                    />
+                  </div>
                 </div>
                 <div class="p-4 font-medium">
                   {{ video.title }}
@@ -258,7 +256,7 @@ function onCloseVideoPlayer() {
               @click="selectedImage = image"
             >
               <img
-                :src="image.url"
+                :src="mediaImageUrl(image.thumbnail)"
                 :alt="image.title"
                 class="aspect-square size-full object-cover transition group-hover:scale-105"
                 loading="lazy"
@@ -277,9 +275,8 @@ function onCloseVideoPlayer() {
     </UContainer>
 
     <LazyVideoPlayer
-      v-if="videoUrl"
-      :url="videoUrl"
-      @close="onCloseVideoPlayer"
+      v-if="videoId"
+      v-model:video-id="videoId"
     />
 
     <UModal v-model:open="imageOpen">
@@ -295,7 +292,7 @@ function onCloseVideoPlayer() {
           />
           <img
             v-if="selectedImage"
-            :src="selectedImage.url"
+            :src="mediaImageUrl(selectedImage.sourceId)"
             :alt="selectedImage.title"
             class="max-h-[85vh] w-full object-contain"
           >

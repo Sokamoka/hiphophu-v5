@@ -79,6 +79,14 @@ the default IPX filesystem source cannot read blobs stored in R2.
 The `none` provider is registered through `image.none` in `nuxt.config.ts`;
 IPX remains the default for other images.
 
+Artist gallery media stores a YouTube video ID or an R2 image pathname in
+`media.source_id`. Image thumbnails also store an R2 pathname, without the
+`/images/` prefix; video thumbnails remain YouTube URLs. Apply the
+`0007_media_source_id` D1 migration before deploying. It converts supported
+YouTube links and local image paths without moving the blobs. The migration
+fails if it encounters music, external images, or unsupported links or image
+thumbnails; resolve those records before retrying.
+
 Artist profile images are stored in R2 at `<artistId>/<filename>`. The
 `artists.avatar` and `artists.hero` columns hold only the filenames; new uploads
 use `<uuid>.webp`. Apply the `0005_artist_profile_images` D1 migration before

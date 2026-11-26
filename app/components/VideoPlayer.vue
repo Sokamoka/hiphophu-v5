@@ -1,38 +1,13 @@
 <script setup lang="ts">
-const props = defineProps<{
-  url?: string
-}>()
+// const props = defineProps<{
+//   videos: string[]
+// }>()
 
-const emit = defineEmits<{
-  close: []
-}>()
-
-const embedUrl = computed(() => {
-  if (!props.url) return undefined
-
-  try {
-    const url = new URL(props.url)
-    const [, firstPathSegment, secondPathSegment] = url.pathname.split('/')
-    let videoId: string | null | undefined
-    if (url.hostname === 'youtu.be') {
-      videoId = firstPathSegment
-    } else if (url.pathname === '/watch') {
-      videoId = url.searchParams.get('v')
-    } else if (['shorts', 'live', 'embed'].includes(firstPathSegment ?? '')) {
-      videoId = secondPathSegment
-    }
-
-    return videoId && /^[\w-]{11}$/.test(videoId)
-      ? `https://www.youtube-nocookie.com/embed/${videoId}`
-      : undefined
-  } catch {
-    return undefined
-  }
-})
+const videoId = defineModel<string>('video-id', { required: true })
 
 const open = computed({
-  get: () => Boolean(props.url),
-  set: () => emit('close')
+  get: () => Boolean(videoId.value),
+  set: () => videoId.value = ''
 })
 </script>
 
@@ -41,28 +16,38 @@ const open = computed({
     v-model:open="open"
     :ui="{ content: 'max-w-min' }"
   >
-    <template #content>
+    <template #content="{ close }">
       <div class="relative w-[min(90vw,64rem)] aspect-video">
-        <UButton
-          icon="i-lucide-x"
-          color="neutral"
-          variant="solid"
-          class="absolute right-3 top-3 z-10"
-          aria-label="Videó bezárása"
-          @click="emit('close')"
-        />
-        <iframe
-          v-if="embedUrl"
-          :src="embedUrl"
-          :title="`YouTube videó: ${url}`"
-          class="size-full rounded-lg"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          referrerpolicy="strict-origin-when-cross-origin"
-          allowfullscreen
-        />
+        <Teleport to="body">
+          <UButton
+            icon="i-ph-x"
+            color="neutral"
+            variant="solid"
+            class="fixed right-1 top-1 z-10"
+            aria-label="Videó bezárása"
+            @click="close"
+          />
+        </Teleport>
+        <ScriptYouTubePlayer
+          v-if="/^[\w-]{11}$/.test(videoId)"
+          :key="videoId"
+          :video-id="videoId"
+          trigger="immediate"
+          :player-vars="{ autoplay: 1 }"
+          :root-attrs="{ class: 'size-full rounded-lg' }"
+          :placeholder-attrs="{ class: 'rounded-lg' }"
+        >
+          <template #error>
+            <UAlert
+              title="A YouTube-lejátszó nem tölthető be"
+              color="error"
+              variant="subtle"
+            />
+          </template>
+        </ScriptYouTubePlayer>
         <UAlert
           v-else
-          title="A videó linkje érvénytelen"
+          title="A videó azonosítója érvénytelen"
           color="error"
           variant="subtle"
         />

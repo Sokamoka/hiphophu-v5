@@ -170,7 +170,7 @@ onMounted(loadPictures)
       <UBlogPost
         orientation="horizontal"
         variant="outline"
-        :image="{ src: picture.url, provider: 'none' }"
+        :image="{ src: mediaImageUrl(picture.thumbnail), provider: 'none' }"
         :ui="{ root: 'items-center lg:flex lg:flex-row', header: 'lg:w-64 shrink-0', body: 'flex-1' }"
       >
         <template #footer>
